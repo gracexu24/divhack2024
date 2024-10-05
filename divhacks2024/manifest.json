@@ -12,10 +12,16 @@
     "default_icon": "hello_extensions.png"
   }
   ,"host_permissions": [
-    "https://instagram.com",
-    "https://x.com",
-    "https://snapchat.com",
-    "https://reddit.com"
+    "facebook.com",
+    "twitter.com",
+    "tiktok.com",
+    "instagram.com",
+    "reddit.com",
+    "snapchat.com",
+    "youtube.com",
+    "linkedin.com",
+    "discord.com",
+    "pinterest.com"
   ]
 }
 
