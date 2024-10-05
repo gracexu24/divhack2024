@@ -3,23 +3,17 @@ let tabStartTime = null;  // Declare globally
 
 // Your list of social media sites
 const socialMediaSites = new Set([
-  "https://facebook.com/*",
-  "https://twitter.com/*",
-  "https://tiktok.com/*",
-  "https://instagram.com/*",
-  "https://reddit.com/*",
-  "https://snapchat.com/*",
-  "https://youtube.com/*",
-  "https://linkedin.com/*",
-  "https://discord.com/*",
-  "https://pinterest.com/*"
+  "facebook.com",
+  "twitter.com",
+  "tiktok.com",
+  "instagram.com",
+  "reddit.com",
+  "snapchat.com",
+  "youtube.com",
+  "linkedin.com",
+  "discord.com",
+  "pinterest.com"
 ]);
-
-for (const url of socialMediaSites) {
-  if (tab.url.startsWith(url)) {
-      // Open the popup when a matching URL is detected
-      chrome.action.openPopup();
-      break; // Exit the loop once a match is found
 
 // Helper function to check if the URL belongs to a social media site
 function isSocialMedia(url) {
@@ -47,7 +41,8 @@ function endTracking(tabId) {
   if (tabStartTime !== null && activeTabId !== null) {
     const endTime = Date.now();
     const duration = (endTime - tabStartTime) / 1000; // Duration in seconds
-    //need to upload duration to server + add together to get total time for the week
+    
+    console.log(`Ending tracking for tab ID: ${tabId}`);  // Debugging line
 
     chrome.tabs.get(tabId, (tab) => {
       const url = new URL(tab.url).hostname;
@@ -67,7 +62,10 @@ function endTracking(tabId) {
 // Event listener for when a tab is updated (e.g., URL change)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
-    startTracking(tabId);  // Start tracking if it's a social media site
+    // Open the popup when a matching URL is detected
+    chrome.action.openPopup();
+    // Start tracking if it's a social media site
+    startTracking(tabId);
   }
 });
 
@@ -82,4 +80,3 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   endTracking(tabId);  // End tracking if the tab is closed
 });
-}}
