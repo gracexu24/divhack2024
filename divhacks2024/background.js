@@ -12,33 +12,30 @@ const socialMediaSites = new Set([
   'pinterest.com'
 ]);
 
+let activeTabId = null;  // Track the active tab ID
+let tabStartTime = null; // Track the start time for tab activities
+
 function isSocialMedia(url) {
   // Extract the hostname from the URL (e.g., "www.facebook.com" -> "facebook.com")
   const domain = new URL(url).hostname;
-
   // Check if the domain matches one of the social media sites
   return socialMediaSites.has(domain);
 }
 
+// Monitor when tab is updated (loaded completely)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete' && tab.url.includes('socialMediaSites')) { 
-      chrome.action.openPopup();
-    }
-  });
-  
-// Monitors when tab is activated
-chrome.tabs.onActivated.addListener((activeInfo) => {
-  startTracking(activeInfo.tabId);
-});
-
-// Monitors when tab is changed/updated
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status == 'complete') {
+  if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
+    // If the tab is a social media site, start tracking time
     startTracking(tabId);
   }
 });
 
-// Store the time spent on each social media website when a tab is closed
+// Monitor when tab is activated (switched to a new tab)
+chrome.tabs.onActivated.addListener((activeInfo) => {
+  startTracking(activeInfo.tabId);
+});
+
+// Monitor when tab is removed (closed)
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   endTracking(tabId);
 });
@@ -61,7 +58,7 @@ function endTracking(tabId) {
     const endTime = Date.now();
     const duration = (endTime - tabStartTime) / 1000; // Time in seconds
 
-    chrome.tabs.get(activeTabId, (tab) => {
+    chrome.tabs.get(tabId, (tab) => {
       const url = new URL(tab.url).hostname;
 
       // Update the time spent on the website
@@ -74,3 +71,4 @@ function endTracking(tabId) {
     });
   }
 }
+
