@@ -1,1 +1,1 @@
-console.log('This popup and website is intended for use as a social media mindfulness tool.');
+console.log('This is a popup!');

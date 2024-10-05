@@ -26,3 +26,51 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
   });
   
+// Monitors when tab is activated
+chrome.tabs.onActivated.addListener((activeInfo) => {
+  startTracking(activeInfo.tabId);
+});
+
+// Monitors when tab is changed/updated
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status == 'complete') {
+    startTracking(tabId);
+  }
+});
+
+// Store the time spent on each social media website when a tab is closed
+chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+  endTracking(tabId);
+});
+
+// Start tracking time for the active tab
+function startTracking(tabId) {
+  if (activeTabId !== tabId) {
+    if (activeTabId !== null && tabStartTime !== null) {
+      endTracking(activeTabId);
+    }
+
+    activeTabId = tabId;
+    tabStartTime = Date.now();
+  }
+}
+
+// End tracking time for a tab and save data to storage
+function endTracking(tabId) {
+  if (tabStartTime !== null && activeTabId !== null) {
+    const endTime = Date.now();
+    const duration = (endTime - tabStartTime) / 1000; // Time in seconds
+
+    chrome.tabs.get(activeTabId, (tab) => {
+      const url = new URL(tab.url).hostname;
+
+      // Update the time spent on the website
+      chrome.storage.local.get(["siteTimes"], (result) => {
+        let siteTimes = result.siteTimes || {};
+        siteTimes[url] = (siteTimes[url] || 0) + duration;
+
+        chrome.storage.local.set({ siteTimes });
+      });
+    });
+  }
+}
