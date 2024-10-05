@@ -1,10 +1,21 @@
 {
-  "name": "Hello Extensions",
+  "manifest_version": 3,
+  "name": "Website Popup",
   "description": "Base Level Extension",
   "version": "1.0",
-  "manifest_version": 3,
-  "action": {
-    "default_popup": "hello.html",
+  "permissions": ["tabs", "activeTab"],
+  "background":{
+    "service_worker": "background.js"
+  }
+  ,"action": {
+    "default_popup": "popup.html",
     "default_icon": "hello_extensions.png"
   }
+  ,"host_permissions": [
+    "https://instagram.com",
+    "https://x.com",
+    "https://snapchat.com",
+    "https://reddit.com"
+  ]
 }
+
