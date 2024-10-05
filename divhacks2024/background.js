@@ -60,3 +60,17 @@ function endTracking(tabId) {
   if (tabStartTime !== null && activeTabId !== null) {
     const endTime = Date.now();
     const duration = (endTime - tabStartTime) / 1000; // Time in seconds
+
+    chrome.tabs.get(activeTabId, (tab) => {
+      const url = new URL(tab.url).hostname;
+
+      // Update the time spent on the website
+      chrome.storage.local.get(["siteTimes"], (result) => {
+        let siteTimes = result.siteTimes || {};
+        siteTimes[url] = (siteTimes[url] || 0) + duration;
+
+        chrome.storage.local.set({ siteTimes });
+      });
+    });
+  }
+}
