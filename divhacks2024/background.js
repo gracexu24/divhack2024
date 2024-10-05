@@ -1,33 +1,36 @@
-let activeTabId = null;  // Track the active tab ID
-let tabStartTime = null; // Track the start time for the tab
+// Global variables to store the active tab ID and tab start time
+let activeTabId = null;
+let tabStartTime = null;
 
 const socialMediaSites = new Set([
   'facebook.com',
   'twitter.com',
   'instagram.com',
   'reddit.com',
-  'tiktok.com',
-  'linkedin.com',
   'youtube.com',
-  'pinterest.com'
 ]);
 
+// Helper function to check if the URL belongs to a social media site
 function isSocialMedia(url) {
   const domain = new URL(url).hostname;
   return socialMediaSites.has(domain);
 }
 
+// Function to start tracking the time for a given tab
 function startTracking(tabId) {
   if (activeTabId !== tabId) {
+    // End tracking for the previous tab, if any
     if (activeTabId !== null && tabStartTime !== null) {
-      endTracking(activeTabId); // End tracking for the previous tab
+      endTracking(activeTabId);
     }
 
+    // Start tracking for the new tab
     activeTabId = tabId;
-    tabStartTime = Date.now(); // Start tracking time for the new tab
+    tabStartTime = Date.now();
   }
 }
 
+// Function to end tracking for a given tab and save the time spent
 function endTracking(tabId) {
   if (tabStartTime !== null && activeTabId !== null) {
     const endTime = Date.now();
@@ -36,6 +39,7 @@ function endTracking(tabId) {
     chrome.tabs.get(tabId, (tab) => {
       const url = new URL(tab.url).hostname;
 
+      // Update the time spent on the website
       chrome.storage.local.get(["siteTimes"], (result) => {
         let siteTimes = result.siteTimes || {};
         siteTimes[url] = (siteTimes[url] || 0) + duration;
@@ -46,19 +50,19 @@ function endTracking(tabId) {
   }
 }
 
-// Monitor when tabs are updated or activated
+// Event listener for when a tab is updated (e.g., URL change)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
     startTracking(tabId);
   }
 });
 
+// Event listener for when a tab is activated (switched)
 chrome.tabs.onActivated.addListener((activeInfo) => {
   startTracking(activeInfo.tabId);
 });
 
-// Monitor when tabs are closed and stop tracking
+// Event listener for when a tab is removed (closed)
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   endTracking(tabId);
 });
-
