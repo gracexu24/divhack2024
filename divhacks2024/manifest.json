@@ -21,7 +21,9 @@
     "youtube.com",
     "linkedin.com",
     "discord.com",
-    "pinterest.com"
+    "pinterest.com",
+    "http://localhost:3000/"
   ]
+
 }
 
