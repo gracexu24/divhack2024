@@ -18,4 +18,19 @@ function isSocialMedia(url) {
 
   // Check if the domain matches one of the social media sites
   return socialMediaSites.has(domain);
+
+
 }
+
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === 'complete' && tab.url.includes('socialMediaSites')) { 
+    chrome.action.openPopup();
+  }
+});
+
+let activeTabId = null;
+let tabStartTime = null;
+
+// Monitors when tab is activated
+chrome.tabs
