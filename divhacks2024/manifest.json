@@ -1,20 +1,24 @@
 {
   "manifest_version": 3,
-  "name": "Website Popup",
+  "name": "Social Media Tracker",
   "description": "Base Level Extension",
   "version": "1.0",
   "permissions": ["tabs", "activeTab"],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self' 'unsafe-inline'; object-src 'self'"
-}
-  ,"background":{
+  "background":{
     "service_worker": "background.js"
   }
   ,"action": {
     "default_popup": "popup.html",
-    "default_icon": "hello_extensions.png"
+    "default_icon": "icon_image48.jpg"
+  }
+  ,"dependencies": {
+    "cors": "^2.8.5", 
+    "express": "^4.17.1",
+    "other-package": "..."
   }
   ,"host_permissions": [
+    "https://x.com",
+    "https://reddit.com",
     "https://facebook.com/*",
     "https://twitter.com/*",
     "https://tiktok.com/*",
@@ -24,9 +28,11 @@
     "https://youtube.com/*",
     "https://linkedin.com/*",
     "https://discord.com/*",
-    "https://pinterest.com/*",
-    "http://localhost:3000/"
+    "https://pinterest.com/*"
+
   ]
+
+  
 
 }
 
