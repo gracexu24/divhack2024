@@ -1,6 +1,6 @@
-// Global variables to store the active tab ID and tab start time
-let activeTabId = null;
-let tabStartTime = null;
+// Global variables
+let activeTabId = null;  // This will store the active tab ID
+let tabStartTime = null;  // This will store the start time for the active tab
 
 const socialMediaSites = new Set([
   'facebook.com',
@@ -19,14 +19,15 @@ function isSocialMedia(url) {
 // Function to start tracking the time for a given tab
 function startTracking(tabId) {
   if (activeTabId !== tabId) {
-    // End tracking for the previous tab, if any
+    // If we have an active tab, end the previous tracking session
     if (activeTabId !== null && tabStartTime !== null) {
       endTracking(activeTabId);
     }
 
-    // Start tracking for the new tab
+    // Set the new active tab
     activeTabId = tabId;
     tabStartTime = Date.now();
+    console.log(`Tracking started for tab ID: ${activeTabId}`);
   }
 }
 
@@ -45,6 +46,7 @@ function endTracking(tabId) {
         siteTimes[url] = (siteTimes[url] || 0) + duration;
 
         chrome.storage.local.set({ siteTimes });
+        console.log(`Time spent on ${url}: ${duration}s`);
       });
     });
   }
@@ -53,16 +55,18 @@ function endTracking(tabId) {
 // Event listener for when a tab is updated (e.g., URL change)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
-    startTracking(tabId);
+    startTracking(tabId);  // Start tracking if it's a social media site
   }
 });
 
 // Event listener for when a tab is activated (switched)
 chrome.tabs.onActivated.addListener((activeInfo) => {
-  startTracking(activeInfo.tabId);
+  console.log('Tab activated:', activeInfo.tabId);
+  startTracking(activeInfo.tabId);  // Start tracking the newly activated tab
 });
 
 // Event listener for when a tab is removed (closed)
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-  endTracking(tabId);
+  endTracking(tabId);  // End tracking if the tab is closed
 });
+
