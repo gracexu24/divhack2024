@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Website Popup",
+  "name": "Social Media Tracker",
   "description": "Base Level Extension",
   "version": "1.0",
-  "permissions": ["tabs", "activeTab"],
+  "permissions": ["tabs", "activeTab", "storage"],
   "background":{
     "service_worker": "background.js"
   }
@@ -12,9 +12,7 @@
     "default_icon": "icon_image48.jpg"
   }
   ,"host_permissions": [
-    "https://instagram.com",
     "https://x.com",
-    "https://snapchat.com",
     "https://reddit.com"
     "https://facebook.com/*",
     "https://twitter.com/*",
@@ -25,8 +23,8 @@
     "https://youtube.com/*",
     "https://linkedin.com/*",
     "https://discord.com/*",
-    "https://pinterest.com/*",
-    "http://localhost:3000/"
+    "https://pinterest.com/*"
+
   ]
 
 }
