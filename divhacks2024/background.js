@@ -15,6 +15,12 @@ const socialMediaSites = new Set([
   "https://pinterest.com/*"
 ]);
 
+for (const url of socialMediaSites) {
+  if (tab.url.startsWith(url)) {
+      // Open the popup when a matching URL is detected
+      chrome.action.openPopup();
+      break; // Exit the loop once a match is found
+
 // Helper function to check if the URL belongs to a social media site
 function isSocialMedia(url) {
   const domain = new URL(url).hostname;
@@ -41,6 +47,7 @@ function endTracking(tabId) {
   if (tabStartTime !== null && activeTabId !== null) {
     const endTime = Date.now();
     const duration = (endTime - tabStartTime) / 1000; // Duration in seconds
+    //need to upload duration to server + add together to get total time for the week
 
     chrome.tabs.get(tabId, (tab) => {
       const url = new URL(tab.url).hostname;
@@ -75,3 +82,4 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   endTracking(tabId);  // End tracking if the tab is closed
 });
+}}

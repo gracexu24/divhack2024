@@ -4,7 +4,10 @@
   "description": "Base Level Extension",
   "version": "1.0",
   "permissions": ["tabs", "activeTab"],
-  "background":{
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'unsafe-inline'; object-src 'self'"
+}
+  ,"background":{
     "service_worker": "background.js"
   }
   ,"action": {
