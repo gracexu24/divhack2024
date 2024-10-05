@@ -70,4 +70,3 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   endTracking(tabId);  // End tracking if the tab is closed
 });
-
