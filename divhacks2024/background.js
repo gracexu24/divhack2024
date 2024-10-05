@@ -1,5 +1,5 @@
-let activeTabId = null;  // Declare globally
-let tabStartTime = null;  // Declare globally
+let activeTabId = null;  // Declare as null for now
+let tabStartTime = null;  // Declare as null for now
 
 // Your list of social media sites
 const socialMediaSites = new Set([

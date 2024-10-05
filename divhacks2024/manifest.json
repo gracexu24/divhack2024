@@ -13,7 +13,7 @@
   }
   ,"host_permissions": [
     "https://x.com",
-    "https://reddit.com"
+    "https://reddit.com",
     "https://facebook.com/*",
     "https://twitter.com/*",
     "https://tiktok.com/*",
