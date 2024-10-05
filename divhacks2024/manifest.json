@@ -12,16 +12,16 @@
     "default_icon": "hello_extensions.png"
   }
   ,"host_permissions": [
-    "https://facebook.com",
-    "https://twitter.com",
-    "https://tiktok.com",
-    "https://instagram.com",
-    "https://reddit.com",
-    "https://snapchat.com",
-    "https://youtube.com",
-    "https://linkedin.com",
-    "https://discord.com",
-    "https://pinterest.com",
+    "https://facebook.com/*",
+    "https://twitter.com/*",
+    "https://tiktok.com/*",
+    "https://instagram.com/*",
+    "https://reddit.com/*",
+    "https://snapchat.com/*",
+    "https://youtube.com/*",
+    "https://linkedin.com/*",
+    "https://discord.com/*",
+    "https://pinterest.com/*",
     "http://localhost:3000/"
   ]
 
