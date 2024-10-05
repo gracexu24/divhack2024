@@ -27,7 +27,7 @@ function startTracking(tabId) {
     // If activeTabId is different from the tabId, end the previous tracking session
     if (activeTabId !== null && tabStartTime !== null) {
       console.log(`Ending previous tracking for tab ${activeTabId} before starting new tracking.`);
-      endTracking(activeTabId);
+      endTracking(activeTabId);  // Ensure we end the previous tracking session
     }
 
     // Set the new active tab
@@ -43,7 +43,7 @@ function endTracking(tabId) {
     const endTime = Date.now();
     const duration = (endTime - tabStartTime) / 1000; // Duration in seconds
 
-    console.log(`Ending tracking for tab ID: ${tabId}`);  // Debugging line
+    console.log(`Ending tracking for tab ID: ${tabId}, Duration: ${duration}s`);  // Debugging line
 
     chrome.tabs.get(tabId, (tab) => {
       if (tab && tab.url) {
@@ -86,6 +86,9 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 // Event listener for when a tab is removed (closed)
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   console.log(`Tab removed: ${tabId}`);  // Debugging line
-  endTracking(tabId);  // End tracking if the tab is closed
+  if (tabId === activeTabId) {
+    console.log(`Tab ${tabId} was the active tab. Ending tracking.`);
+    endTracking(tabId);  // End tracking if the tab is closed
+  }
 });
 
