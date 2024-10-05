@@ -11,6 +11,11 @@
     "default_popup": "popup.html",
     "default_icon": "hello_extensions.png"
   }
+  ,"dependencies": {
+    "cors": "^2.8.5", 
+    "express": "^4.17.1",
+    "other-package": "..."
+  }
   ,"host_permissions": [
     "https://facebook.com/*",
     "https://twitter.com/*",
@@ -24,6 +29,8 @@
     "https://pinterest.com/*",
     "http://localhost:3000/"
   ]
+
+  
 
 }
 
