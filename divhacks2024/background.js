@@ -3,11 +3,16 @@ let tabStartTime = null;  // Declare globally
 
 // Your list of social media sites
 const socialMediaSites = new Set([
-  'facebook.com',
-  'twitter.com',
-  'instagram.com',
-  'reddit.com',
-  'youtube.com',
+  "https://facebook.com/*",
+  "https://twitter.com/*",
+  "https://tiktok.com/*",
+  "https://instagram.com/*",
+  "https://reddit.com/*",
+  "https://snapchat.com/*",
+  "https://youtube.com/*",
+  "https://linkedin.com/*",
+  "https://discord.com/*",
+  "https://pinterest.com/*"
 ]);
 
 // Helper function to check if the URL belongs to a social media site
