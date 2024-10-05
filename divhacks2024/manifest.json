@@ -11,6 +11,11 @@
     "default_popup": "popup.html",
     "default_icon": "icon_image48.jpg"
   }
+  ,"dependencies": {
+    "cors": "^2.8.5", 
+    "express": "^4.17.1",
+    "other-package": "..."
+  }
   ,"host_permissions": [
     "https://x.com",
     "https://reddit.com",
@@ -26,6 +31,8 @@
     "https://pinterest.com/*"
 
   ]
+
+  
 
 }
 

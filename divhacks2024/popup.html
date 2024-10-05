@@ -1,16 +1,83 @@
-<html>
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Popup</title>
     <style>
-        body { width: 200px; }
+        body {
+            width: 200px;
+            font-family: Arial, sans-serif;
+        }
+        .checklist {
+            list-style-type: none; /* Remove bullet points */
+            padding: 0;
+        }
+        .checklist-item {
+            margin: 8px 0;
+        }
     </style>
-  <body>
+</head>
+<body>
+
     <h1>
       <a href="https://www.epa.gov/" target="_blank">Hey! How are you spending your time on social media?</a>
     </h1>
+    
+    <ul class="checklist">
+        <li class="checklist-item">
+            <input type="checkbox" id="item1" onchange="handleCheckboxChange(this)">
+            <label for="item1">I'm using social media to chat with friends.</label>
+        </li>
+        <li class="checklist-item">
+            <input type="checkbox" id="item2" onchange="handleCheckboxChange(this)">
+            <label for="item2">I'm using social media to look at artwork.</label>
+        </li>
+        <li class="checklist-item">
+            <input type="checkbox" id="item3" onchange="handleCheckboxChange(this)">
+            <label for="item3">I'm using social media to watch short form videos.</label>
+        </li>
+    </ul>
+
+    <script>
+        // Variables to store the state of the checkboxes
+        let isChecked1 = false;
+        let isChecked2 = false;
+        let isChecked3 = false;
+
+        function handleCheckboxChange(checkbox) {
+            // Update the variable based on checkbox state
+            if (checkbox.id === 'item1') {
+                isChecked1 = checkbox.checked;
+            } else if (checkbox.id === 'item2') {
+                isChecked2 = checkbox.checked;
+            } else if (checkbox.id === 'item3') {
+                isChecked3 = checkbox.checked;
+            }
+            // Update counts based on checkbox states
+            updateCounts();
+        }
+
+        function updateCounts() {
+            let x = 0, y = 0, z = 0;
+
+            if (isChecked1) {
+                x += 1;
+            }
+            if (isChecked2) {
+                y += 1;
+            }
+            if (isChecked3) {
+                z += 1;
+            }
+        }
+    </script>
+
+    <ul id="user-list"></ul>
     <script src="popup.js"></script>
 
+    <script src="background.js"></script>
     <script src="script.js"></script>
 
-  </body>
+</body>
 </html>
