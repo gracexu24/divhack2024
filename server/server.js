@@ -12,7 +12,7 @@ const users = [
 // Define a GET endpoint
 app.get('/api/users', (req, res) => {
     // Respond with the list of users as JSON
-    res.json({ users: users });
+    res.json({ users });
 });
 
 // Start the server
