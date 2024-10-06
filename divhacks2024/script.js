@@ -17,10 +17,7 @@
 */ 
 
 const userList = [
-    "Faceboo",
-    "Twitte",
-    "Tikto",
-    "Instagra"
+    {id: 1, name: 'Faceboo'}, {id: 2, name: 'Twitte'}, {id: 2, name: 'Tikto'}, {id: 2, name: 'Insta'}
 ];
 
 // Send the list to the server
