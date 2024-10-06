@@ -75,43 +75,7 @@
                   Summer events:
                 </p>
                 <h1 class="text-uppercase fw-bold text-white mb-3" id="counter">
-                  5D 10h 20m 50s 
-                  <script type="module">
-                    const counter = document.getElementById("counter")
-                    const countDownDate = new Date(
-                      (
-                        await (await fetch("/next-event-date.txt")).text()
-                      ).split("\n")[1]
-                    ).getTime()
-
-                    function updateCounter() {
-                      const distance = countDownDate - new Date().getTime()
-
-                      if (distance < 0) {
-                        counter.innerHTML = "Coming Soon!"
-                        return
-                      }
-
-                      const days = Math.floor(distance / (1000 * 60 * 60 * 24))
-                      const hours = Math.floor(
-                        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-                      )
-                      const minutes = Math.floor(
-                        (distance % (1000 * 60 * 60)) / (1000 * 60)
-                      )
-                      const seconds = Math.floor(
-                        (distance % (1000 * 60)) / 1000
-                      )
-
-                      counter.innerHTML = `${days}D ${hours}h ${minutes}m ${seconds}s`
-                    }
-
-                    updateCounter()
-
-                    setInterval(updateCounter, 1000)
-
-                    console.log(1)
-                  </script>
+                  TIME
                 </h1>
               </div>
             </div>
