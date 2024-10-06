@@ -46,7 +46,7 @@
             <div class="container">
                 <div class="masthead-subheading">Our Website</div>
                 <div class="masthead-heading text-uppercase">Hi!</div>
-                <a class="btn btn-primary btn-xl text-uppercase" href="https://www.etsy.com/shop/StudioAprilShowers">Shop Now!</a>
+               
             </div>
         </header>
 
@@ -75,48 +75,8 @@
                   Summer events:
                 </p>
                 <h1 class="text-uppercase fw-bold text-white mb-3" id="counter">
-                  5D 10h 20m 50s
-                  <script type="module">
-                    const counter = document.getElementById("counter")
-                    const countDownDate = new Date(
-                      (
-                        await (await fetch("/next-event-date.txt")).text()
-                      ).split("\n")[1]
-                    ).getTime()
-
-                    function updateCounter() {
-                      const distance = countDownDate - new Date().getTime()
-
-                      if (distance < 0) {
-                        counter.innerHTML = "Coming Soon!"
-                        return
-                      }
-
-                      const days = Math.floor(distance / (1000 * 60 * 60 * 24))
-                      const hours = Math.floor(
-                        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-                      )
-                      const minutes = Math.floor(
-                        (distance % (1000 * 60 * 60)) / (1000 * 60)
-                      )
-                      const seconds = Math.floor(
-                        (distance % (1000 * 60)) / 1000
-                      )
-
-                      counter.innerHTML = `${days}D ${hours}h ${minutes}m ${seconds}s`
-                    }
-
-                    updateCounter()
-
-                    setInterval(updateCounter, 1000)
-
-                    console.log(1)
-                  </script>
+                  TIME
                 </h1>
-                <!--<button class="btn btn-primary fs-5 py-2 px-4" type="button">
-                  Learn more
-                </button>-->
-            
               </div>
             </div>
           </div>
@@ -128,7 +88,7 @@
         <footer class="footer py-4">
             <div class="container">
                 <div class="row align-items-center">
-                    <div class="col-lg-4 text-lg-start">Copyright &copy; </div>
+                    <div class="col-lg-4 text-lg-start"> By Grace Xu, Sonali Rao, Emily Ta</div>
         
                 </div>
             </div>
