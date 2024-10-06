@@ -1,4 +1,4 @@
-fetch('http://localhost:3000/api/users')
+/*fetch('http://localhost:3000/api/users')
   .then(response => response.json())
   .then(data => {
     console.log(data);  // Log the entire object to inspect its structure
@@ -14,3 +14,28 @@ fetch('http://localhost:3000/api/users')
     }
   })
   .catch(error => console.error('Error fetching data:', error));
+*/ 
+
+const userList = [
+    "Faceboo",
+    "Twitte",
+    "Tikto",
+    "Instagra"
+];
+
+// Send the list to the server
+fetch('http://localhost:3000/api/users', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ users: userList })  // Sending the list as JSON
+})
+.then(response => response.json())
+.then(data => {
+    console.log('Server Response:', data);
+    alert('Users sent to the server!');
+})
+.catch(error => {
+    console.error('Error:', error);
+});

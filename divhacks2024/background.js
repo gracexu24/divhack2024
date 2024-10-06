@@ -1,6 +1,6 @@
-let openTabs = {};
-// Your list of social media sites (limited to Facebook, Twitter, Instagram, and TikTok)
-const socialMediaSites = new Set([
+let openTabs = {}; // To keep track of tabs that are being actively tracked
+// List of social media sites
+const socialMediaSites = new Map([
   ['facebook.com', true],
   ['x.com', true], // 'x.com' for Twitter
   ['instagram.com', true],
@@ -26,7 +26,7 @@ async function isSocialMedia() {
   return false; // Return false if URL is not found
 }
 
-// Process controller
+// Process controller for popup and tracking
 async function checkAndOpenPopup() {
   const isSocial = await isSocialMedia();
   if (isSocial) {
@@ -34,7 +34,7 @@ async function checkAndOpenPopup() {
   }
 }
 
-// Listen for tab updates
+// Listen for tab updates and check if it's a social media site
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.active) {
     checkAndOpenPopup(); // Check the URL and open popup if it's a social media site
@@ -86,6 +86,7 @@ function endTracking(tabId) {
       let siteTimes = result.siteTimes || {};  // Initialize with empty object if undefined
       const domain = new URL(openTabs[tabId].url).hostname;
       
+      // Update the time spent on this specific domain
       siteTimes[domain] = (siteTimes[domain] || 0) + duration;
       
       // Save the updated siteTimes back to local storage
@@ -138,3 +139,4 @@ function verifyStorage() {
     console.log("Current stored site times:", result.siteTimes);  // Verify storage
   });
 }
+
