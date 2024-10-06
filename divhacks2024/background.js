@@ -15,6 +15,21 @@ const socialMediaSites = new Set([
   "pinterest.com"
 ]);
 
+function openPopup(tab) {
+  // Check if the tab's URL matches any of the specified social media sites
+  const url = new URL(tab.url); // Create a URL object to easily access hostname
+
+  if (
+    url.hostname === 'facebook.com' ||
+    url.hostname === 'twitter.com' ||
+    url.hostname === 'tiktok.com' ||
+    url.hostname === 'instagram.com'
+  ) {
+    chrome.action.openPopup(); // Open the popup
+  }
+}
+
+
 // Helper function to check if the URL belongs to a social media site
 function isSocialMedia(url) {
   const domain = new URL(url).hostname;
