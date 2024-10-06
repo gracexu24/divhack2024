@@ -14,7 +14,11 @@ const corsOptions = {
 };
 
 // Use CORS middleware
-app.use(cors(corsOptions));
+app.use(cors())
+ 
+app.get('/products/:id', function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
 
 // Example data (in a real app, this could come from a database)
 /*const users = [
@@ -24,6 +28,7 @@ app.use(cors(corsOptions));
     { id: 4, name: "Instagram" }
 ];
 */
+
 
 // Use body-parser middleware to parse incoming JSON requests
 app.use(bodyParser.json());
