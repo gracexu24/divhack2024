@@ -1,7 +1,11 @@
-let activeTabId = null;  // Declare globally
-let tabStartTime = null;  // Declare globally
+// Global variable to store the time spent on social media sites
+let siteTimes = {};
 
-// Your list of social media sites (with only domains)
+// Tracking variables
+let activeTabUrl = null;
+let tabStartTime = null;
+
+// List of social media sites (you can modify/add more as needed)
 const socialMediaSites = new Set([
   "facebook.com",
   "twitter.com",
@@ -25,36 +29,37 @@ const socialMediaSites = new Set([
   "pinterest.com"
 ]);
 
-// Helper function to check if the URL belongs to a social media site
+// Function to check if the current URL is a social media site
 function isSocialMedia(url) {
-  const domain = new URL(url).hostname.replace('www.', '');  // Normalize the URL by removing 'www.'
-  return socialMediaSites.has(domain);  // Match only the normalized domain
+  const domain = new URL(url).hostname;
+  return socialMediaSites.has(domain);
 }
 
-// Function to start tracking time for a given tab
-function startTracking(tabId) {
-  if (activeTabId !== tabId) {
-    // If activeTabId is different from the tabId, end the previous tracking session
-    if (activeTabId !== null && tabStartTime !== null) {
-      console.log(`Ending previous tracking for tab ${activeTabId} before starting new tracking.`);
-      endTracking(activeTabId);  // Ensure we end the previous tracking session
+// Function to start tracking time for a given website
+function startTracking(url) {
+  if (activeTabUrl !== url) {
+    // If we're switching to a new website, stop tracking the previous one
+    if (activeTabUrl !== null && tabStartTime !== null) {
+      endTracking(activeTabUrl);
     }
 
-    // Set the new active tab
-    activeTabId = tabId;
+    // Start tracking the new website
+    activeTabUrl = url;
     tabStartTime = Date.now();
-    console.log(`Tracking started for tab ID: ${activeTabId}`);
+    console.log(`Started tracking time for: ${activeTabUrl}`);
   }
 }
 
-// Function to end tracking for a given tab and save the time spent
-function endTracking(tabId) {
-  if (tabStartTime !== null && activeTabId !== null) {
+// Function to end tracking for the website and log the time spent
+function endTracking(url) {
+  if (tabStartTime !== null) {
     const endTime = Date.now();
     const duration = (endTime - tabStartTime) / 1000; // Duration in seconds
 
-    console.log(`Ending tracking for tab ID: ${tabId}, Duration: ${duration}s`);  // Debugging line
+    // Log the duration to the console
+    console.log(`Time spent on ${url}: ${duration.toFixed(2)} seconds`);
 
+<<<<<<< HEAD
     chrome.tabs.get(tabId, (tab) => {
       const domain = new URL(tab.url).hostname.replace('www.', '');  // Normalize URL to domain
         console.log(`Tracking time for: ${domain}, Duration: ${duration}s`);
@@ -80,22 +85,68 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     chrome.action.openPopup();
     // Start tracking if it's a social media site
     startTracking(tabId);
+=======
+    // Update the total time spent on this site
+    if (!siteTimes[url]) {
+      siteTimes[url] = 0;
+    }
+    siteTimes[url] += duration;
+
+    // Log the updated site times object
+    console.log("Updated site times:", siteTimes);
   }
-});
+}
 
-// Event listener for when a tab is activated (switched)
-chrome.tabs.onActivated.addListener((activeInfo) => {
-  console.log(`Tab activated: ${activeInfo.tabId}`);  // Debugging line
-  activeTabId = activeInfo.tabId;  // Set activeTabId when the tab is activated
-  startTracking(activeTabId);  // Start tracking the newly activated tab
-});
+// Monitor tab changes
+function monitorTabChanges() {
+  const currentUrl = window.location.href;
 
-// Event listener for when a tab is removed (closed)
-chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-  console.log(`Tab removed: ${tabId}`);  // Debugging line
-  if (tabId === activeTabId) {
-    console.log(`Tab ${tabId} was the active tab. Ending tracking.`);
-    endTracking(tabId);  // End tracking if the tab is closed
+  // If the site is a social media site, start tracking
+  if (isSocialMedia(currentUrl)) {
+    startTracking(currentUrl);
+  } else if (activeTabUrl !== null) {
+    // If we're leaving the site, stop tracking
+    endTracking(activeTabUrl);
+    activeTabUrl = null;
+>>>>>>> 446e82139ed3e5eb5d5d52b45196aa6ba9f976eb
   }
-});
+}
 
+// Run the monitoring function every 30 seconds
+setInterval(monitorTabChanges, 30000);
+
+// Initial check when the script runs
+monitorTabChanges();
+
+// Manually stop tracking (useful when the script runs)
+function stopTracking() {
+  if (activeTabUrl !== null) {
+    endTracking(activeTabUrl);
+    activeTabUrl = null;
+  }
+  clearInterval(monitorTabChanges); // Stop the interval
+}
+
+// Function to upload the tracking data to your website
+function uploadTrackingData() {
+  const dataToUpload = JSON.stringify(siteTimes); // Convert the data to JSON format
+
+  // Use Fetch API to send the data to your server
+  fetch('https://your-website.com/upload-data', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: dataToUpload
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Data uploaded successfully:", data);
+  })
+  .catch(error => {
+    console.error("Error uploading data:", error);
+  });
+}
+
+// Example: You can run uploadTrackingData() later in the console to upload the data
+// uploadTrackingData();
