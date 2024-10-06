@@ -89,12 +89,15 @@ function stopTracking() {
   clearInterval(monitorTabChanges); // Stop the interval
 }
 
-// Function to upload the tracking data to your website
+// Function to upload the tracking data to your local server
 function uploadTrackingData() {
   const dataToUpload = JSON.stringify(siteTimes); // Convert the data to JSON format
 
-  // Use Fetch API to send the data to your server
-  fetch('https://your-website.com/upload-data', {
+  // Replace with your local server's endpoint
+  const localServerUrl = 'http://localhost:8000'; // Update with your local server's URL
+
+  // Use Fetch API to send the data to your local server
+  fetch(localServerUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -112,3 +115,4 @@ function uploadTrackingData() {
 
 // Example: You can run uploadTrackingData() later in the console to upload the data
 // uploadTrackingData();
+
