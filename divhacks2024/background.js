@@ -8,30 +8,38 @@ const socialMediaSites = new Map([
   ['tiktok.com', true]
 ]);
 
+if (typeof window !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+      // Your code to run after the DOM is fully loaded
+      console.log('DOM fully loaded and parsed');
+  });
+}
+
 // Helper function to extract domain from a URL
 function getDomain(url) {
-  try {
-    // Skip invalid chrome:// or about:// URLs
-    if (url.startsWith('chrome://') || url.startsWith('about://')) {
-      return ''; // Return an empty string for these types of URLs
-    }
-    const domain = new URL(url).hostname.replace('www.', ''); // Remove 'www.' if present
-    return domain.toLowerCase(); // Convert domain to lowercase for consistency
-  } catch (error) {
-    console.error("Failed to extract domain from URL", url, error);
-    return ''; // Return an empty string in case of error
-  }
+  const domain = new URL(url).hostname.replace('www.', ''); // Remove 'www.' if present
+  console.log('Extracted domain:', domain); // Log the domain for debugging
+  return domain.toLowerCase();
 }
 
 // Helper function to check if the URL belongs to a social media site
-async function isSocialMedia(url) {
-  const domain = getDomain(url); // Extract domain
-  return socialMediaSites.has(domain); // Check if the domain is in the list
+async function isSocialMedia() {
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  const url = tabs[0]?.url;
+
+  if (url) {
+    const domain = getDomain(url); // Extract domain
+    console.log('Checking domain:', domain); // Log the domain to check if it's in the Map
+    return socialMediaSites.has(domain); // Check if the domain is in the list
+  }
+
+  return false; // Return false if URL is not found
 }
 
 // Process controller for popup and tracking
-async function checkAndOpenPopup(tab) {
-  const isSocial = await isSocialMedia(tab.url);
+async function checkAndOpenPopup() {
+  const isSocial = await isSocialMedia();
+  console.log('Is Social Media:', isSocial); // Log whether it's a social media site
   if (isSocial) {
     chrome.action.openPopup(); // Open the popup
   }
@@ -39,14 +47,12 @@ async function checkAndOpenPopup(tab) {
 
 // Listen for tab updates and check if it's a social media site
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);
-  
-  // If the tab is fully loaded (changeInfo.status === 'complete') and is a social media site
-  if (changeInfo.status === 'complete' && tab.active) {
-    checkAndOpenPopup(tab); // Check the URL and open popup if it's a social media site
-    if (isSocialMedia(tab.url)) {
-      console.log(`Tab updated: ${tabId}, social media site found, starting tracking.`);
-      startTracking(tabId, tab.url);
+  console.log('Tab updated:', changeInfo, tab); // Log the update details for debugging
+
+  // Check for complete or loading status
+  if (changeInfo.status === 'complete' || changeInfo.status === 'loading') {
+    if (tab.active) {
+      checkAndOpenPopup(); // Check the URL and open popup if it's a social media site
     }
   }
 });
