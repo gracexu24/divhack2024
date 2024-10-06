@@ -4,7 +4,7 @@ function displayTimeSpent() {
     chrome.storage.local.get(['siteTimes'], (result) => {
         console.log("Stored siteTimes:", result.siteTimes); // Log the stored data
 
-        const siteTimes = result.siteTimes || {};
+        const siteTimes = result.siteTimes || {};  // Fallback to an empty object if no data
         const timeDisplay = document.getElementById('social-media-time');
         
         // Clear previous content
