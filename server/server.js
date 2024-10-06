@@ -10,7 +10,7 @@ app.use(cors());
 const users = [
     { id: 1, name: "Facebook" },
     { id: 2, name: "Twitter" },
-    { id: 3, name: "Tiktok" }
+    { id: 3, name: "Tiktok" },
     { id: 4, name: "Instagram" }
 ];
 
