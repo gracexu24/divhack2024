@@ -8,6 +8,13 @@ const socialMediaSites = new Map([
   ['tiktok.com', true]
 ]);
 
+if (typeof window !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+      // Your code to run after the DOM is fully loaded
+      console.log('DOM fully loaded and parsed');
+  });
+}
+
 // Helper function to extract domain from a URL
 function getDomain(url) {
   try {
@@ -22,7 +29,6 @@ function getDomain(url) {
     return ''; // Return an empty string in case of error
   }
 }
-
 // Helper function to check if the URL belongs to a social media site
 async function isSocialMedia(url) {
   const domain = getDomain(url); // Extract domain
@@ -79,7 +85,7 @@ function endTracking(tabId) {
     // Log the duration for this tab
     console.log(`Tab ${tabId} ended. Duration: ${duration.toFixed(2)} seconds`);
     
-    // Store the time spent on the site in chrome.storage
+    // Store the time spent on this site in chrome.storage
     chrome.storage.local.get(["siteTimes"], (result) => {
       let siteTimes = result.siteTimes || {};  // Initialize with empty object if undefined
       const domain = getDomain(openTabs[tabId].url); // Extract domain
@@ -90,7 +96,6 @@ function endTracking(tabId) {
       // Save the updated siteTimes back to local storage
       chrome.storage.local.set({ siteTimes }, () => {
         console.log(`Updated time spent on ${domain}: ${siteTimes[domain]} seconds`);
-
         // Notify popup to update time display
         chrome.runtime.sendMessage({ action: 'updateTimeDisplay' });
       });
@@ -121,7 +126,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, (tab) => {
     console.log(`Tab activated: ${activeInfo.tabId}, URL: ${tab.url}`);
     
-    if (tab && isSocialMedia(tab.url)) {
+    if (tab && socialMediaSites.has(getDomain(tab.url))) {
       startTracking(activeInfo.tabId, tab.url);  // Start tracking for active tab if it's a social media site
     }
   });
