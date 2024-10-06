@@ -68,9 +68,13 @@ function endTracking(tabId) {
 
 // Event listener for when a tab is updated (e.g., URL change or tab reload)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);  // Debugging line
+  // Only start tracking if the tab has completed loading and is a social media tab
   if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
-    startTracking(tabId, tab.url);  // Start tracking if it's a social media site
+    // Avoid starting tracking multiple times for the same tab
+    if (tabId !== activeTabId) {
+      console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);
+      startTracking(tabId, tab.url);  // Start tracking if it's a social media site
+    }
   }
 });
 
@@ -111,29 +115,3 @@ function verifyStorage() {
   });
 }
 
-// Event listener for when a tab is updated (URL change or tab reload)
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);  // Debugging line
-  if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
-    startTracking(tabId, tab.url);  // Start tracking if it's a social media site
-  }
-});
-
-// Function to open the popup (to be triggered when a social media tab is updated)
-function openPopup(tab) {
-  const url = new URL(tab.url);
-
-  // Check if the hostname matches any of the specified domains
-  if (
-    url.hostname === 'www.facebook.com' ||
-    url.hostname === 'www.twitter.com' ||
-    url.hostname === 'www.tiktok.com' ||
-    url.hostname === 'www.instagram.com' ||
-    url.hostname === 'facebook.com' ||
-    url.hostname === 'twitter.com' ||
-    url.hostname === 'tiktok.com' ||
-    url.hostname === 'instagram.com'
-  ) {
-    chrome.action.openPopup(); // Open the popup
-  }
-}
