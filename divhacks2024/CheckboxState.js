@@ -17,16 +17,31 @@
         }
 
         function updateCounts() {
-            let x = 0, y = 0, z = 0;
+            let Friends = 0, News = 0, Videos = 0;
 
             if (isChecked1) {
-                x += 1;
+                Friends += 1;
             }
             if (isChecked2) {
-                y += 1;
+                News += 1;
             }
             if (isChecked3) {
-                z += 1;
+                Videos += 1;
             }
         }
-        console.log(`Count x: ${x}, Count y: ${y}, Count z: ${z}`);
+
+        async function sendDataToSheet(Friends, News, Videos) {
+            const url = ''; // Replace with your web app URL
+            const response = await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ Friends, News, Videos })
+            });
+            
+            const result = await response.json();
+            console.log(result); // Log the response from Google Sheets
+          }
+          
+        
