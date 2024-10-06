@@ -5,7 +5,16 @@ const bodyParser = require('body-parser');
 const cors = require('cors'); 
 
 // Enable CORS for all origins (or specify your frontend origin)
-app.use(cors());
+//app.use(cors());
+// Enable CORS for all origins (you can specify the allowed origin if necessary)
+const corsOptions = {
+    origin: 'http://localhost:8000', // Set your frontend origin here
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+};
+
+// Use CORS middleware
+app.use(cors(corsOptions));
 
 // Example data (in a real app, this could come from a database)
 /*const users = [

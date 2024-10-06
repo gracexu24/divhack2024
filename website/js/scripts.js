@@ -8,7 +8,7 @@
 // 
 
 //server??
-fetch('https://d902-128-59-178-198.ngrok-free.app/api/users')
+fetch('https://9c74-128-59-178-198.ngrok-free.app/api/users')
   .then(response => response.json())
   .then(data => {
     console.log(data);  // Log the entire object to inspect its structure
