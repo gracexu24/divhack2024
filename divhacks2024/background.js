@@ -1,4 +1,5 @@
 let openTabs = {}; // To keep track of tabs that are being actively tracked
+
 // List of social media sites
 const socialMediaSites = new Map([
   ['facebook.com', true],
@@ -9,21 +10,31 @@ const socialMediaSites = new Map([
 
 // Helper function to extract domain from a URL
 function getDomain(url) {
-  const domain = new URL(url).hostname.replace('www.', ''); // Remove 'www.' if present
-  return domain.toLowerCase();
+  try {
+    // Skip invalid chrome:// or about:// URLs
+    if (url.startsWith('chrome://') || url.startsWith('about://')) {
+      return ''; // Return an empty string for these types of URLs
+    }
+    const domain = new URL(url).hostname.replace('www.', ''); // Remove 'www.' if present
+    return domain.toLowerCase(); // Convert domain to lowercase for consistency
+  } catch (error) {
+    console.error("Failed to extract domain from URL", url, error);
+    return ''; // Return an empty string in case of error
+  }
 }
 
 // Helper function to check if the URL belongs to a social media site
 async function isSocialMedia() {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   const url = tabs[0]?.url;
-  
-  if (url) {
+
+  // Check if the URL is valid and starts with http:// or https://
+  if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
     const domain = getDomain(url); // Extract domain
     return socialMediaSites.has(domain); // Check if the domain is in the list
   }
 
-  return false; // Return false if URL is not found
+  return false; // Return false if URL is not valid or not a social media site
 }
 
 // Process controller for popup and tracking
@@ -36,37 +47,32 @@ async function checkAndOpenPopup() {
 
 // Listen for tab updates and check if it's a social media site
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete' && tab.active) {
-    checkAndOpenPopup(); // Check the URL and open popup if it's a social media site
-  }
-});
-
-// Event listener for when a tab is updated (URL change or tab reload)
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);
   
   // If the tab is fully loaded (changeInfo.status === 'complete') and is a social media site
-  if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
-    console.log(`Tab updated: ${tabId}, social media site found, starting tracking.`);
-    startTracking(tabId, tab.url);
+  if (changeInfo.status === 'complete' && tab.active) {
+    checkAndOpenPopup(); // Check the URL and open the popup if it's a social media site
+    if (isSocialMedia(tab.url)) {
+      console.log(`Tab updated: ${tabId}, social media site found, starting tracking.`);
+      startTracking(tabId, tab.url);
+    }
   }
 });
 
-// Helper function to check if a tab's URL belongs to a social media site
-function isSocialMedia(url) {
-  const domain = new URL(url).hostname;
-  return socialMediaSites.has(domain);
-}
-
 // Function to start tracking time for a given tab
 function startTracking(tabId, url) {
-  if (!(tabId in openTabs)) {
-    // Start tracking the tab and store the start time
-    openTabs[tabId] = { 
-      startTime: Date.now(),
-      url: url 
-    };
-    console.log(`Tracking started for tab ${tabId}, URL: ${url}`);
+  const domain = getDomain(url);  // Extract the domain from the URL
+  if (socialMediaSites.has(domain)) {
+    if (!(tabId in openTabs)) {
+      // Start tracking the tab and store the start time
+      openTabs[tabId] = { 
+        startTime: Date.now(),
+        url: url 
+      };
+      console.log(`Tracking started for tab ${tabId}, URL: ${url}`);
+    }
+  } else {
+    console.log(`Skipping tracking for tab ${tabId}, URL is not a social media site.`);
   }
 }
 
@@ -84,8 +90,8 @@ function endTracking(tabId) {
     // Store the time spent on the site in chrome.storage
     chrome.storage.local.get(["siteTimes"], (result) => {
       let siteTimes = result.siteTimes || {};  // Initialize with empty object if undefined
-      const domain = new URL(openTabs[tabId].url).hostname;
-      
+      const domain = getDomain(openTabs[tabId].url); // Extract domain
+
       // Update the time spent on this specific domain
       siteTimes[domain] = (siteTimes[domain] || 0) + duration;
       
@@ -133,7 +139,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 
-// Helper to verify storage contents
+// Helper to verify storage contents (for debugging)
 function verifyStorage() {
   chrome.storage.local.get(["siteTimes"], (result) => {
     console.log("Current stored site times:", result.siteTimes);  // Verify storage
