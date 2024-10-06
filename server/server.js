@@ -33,7 +33,7 @@ app.post('/api/users', (req, res) => {
         console.log('Received users:', users);
         
         // Respond back to the client
-        res.status(200).json({ message: 'Users list saved successfully!', users });
+        res.status(200).json({ message: 'Users list saved successfully!', user: users });
     } else {
         res.status(400).json({ message: 'Invalid data, expected an array with 4 elements.' });
     }
