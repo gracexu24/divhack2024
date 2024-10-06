@@ -12,6 +12,7 @@ const socialMediaSites = new Set([
 // Helper function to check if the URL belongs to a social media site
 function isSocialMedia(url) {
   const domain = new URL(url).hostname;
+  console.log(`Checking if ${domain} is a social media site`);  // Debugging line
   return socialMediaSites.has(domain);  // Return true if the domain is in the list
 }
 
@@ -68,15 +69,31 @@ function endTracking(tabId) {
 
 // Event listener for when a tab is updated (e.g., URL change or tab reload)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);  // Debugging line
+
   // Only start tracking if the tab has completed loading and is a social media tab
-  if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
+  if (changeInfo.status === 'complete' && tab.url && isSocialMedia(tab.url)) {
     // Avoid starting tracking multiple times for the same tab
     if (tabId !== activeTabId) {
-      console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);
+      console.log(`Starting tracking for tab: ${tabId}, URL: ${tab.url}`);
       startTracking(tabId, tab.url);  // Start tracking if it's a social media site
     }
   }
+
+  // Open the popup if it's a social media tab
+  openPopup(tab);
 });
+
+// Function to open the popup when a social media site is loaded
+function openPopup(tab) {
+  const url = new URL(tab.url);
+  
+  // Check if the hostname matches any of the specified social media domains
+  if (isSocialMedia(tab.url)) {
+    chrome.action.openPopup();  // Open the popup
+    console.log(`Opening popup for: ${tab.url}`);
+  }
+}
 
 // Event listener for when a tab is activated (when you switch between tabs)
 chrome.tabs.onActivated.addListener((activeInfo) => {
