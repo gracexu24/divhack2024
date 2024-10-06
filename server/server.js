@@ -20,6 +20,12 @@ app.get('/products/:id', function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
 
+app.use(cors({
+    origin: 'http://localhost:8000',  // Set the origin of your frontend
+    methods: ['GET', 'POST'],        // Allow specific HTTP methods
+    allowedHeaders: ['Content-Type'] // Allow specific headers (like Content-Type)
+  }));
+  
 // Example data (in a real app, this could come from a database)
 /*const users = [
     { id: 1, name: "Facebook" },
