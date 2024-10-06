@@ -13,6 +13,7 @@ function getDomain(url) {
   return domain;
 }
 
+
 // Helper function to check if the URL belongs to a social media site
 async function isSocialMedia() {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
