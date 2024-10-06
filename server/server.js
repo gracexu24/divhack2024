@@ -13,9 +13,6 @@ const corsOptions = {
     allowedHeaders: ['Content-Type'],
 };
 
-// Use CORS middleware
-app.use(cors())
- 
 app.get('/products/:id', function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
