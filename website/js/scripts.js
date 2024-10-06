@@ -19,9 +19,12 @@ fetch('http://localhost:3000/api/users')
         listItem.textContent = user.name;  // Assuming 'name' is a property of each user
         document.getElementById('user-list').appendChild(listItem);
       });
-    } else {
+      updateUserNames();
+    } 
+    else {
       console.error('Data.users is not an array:', data);
     }
+    
   })
   .catch(error => console.error('Error fetching data:', error));
 //server??
@@ -31,11 +34,15 @@ $(document).ready(function(){
     $("#popup").modal('show');
 }) 
 
-const userList = document.getElementById('user-list');
-const listItems = userList.children; 
-document.getElementById("user-name0").textContent = listItems[0].textContent;
-document.getElementById("user-name1").textContent = listItems[1].textContent;
+function updateUserNames() {
+    const userList = document.getElementById('user-list');
+    const listItems = userList.children;
 
+    document.getElementById("user-name0").textContent = listItems[0].textContent; // Display first user
+
+    document.getElementById("user-name1").textContent = listItems[1].textContent; // Display second user
+
+}
 
 
 window.addEventListener('DOMContentLoaded', event => {
