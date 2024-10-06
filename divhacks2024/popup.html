@@ -6,7 +6,7 @@
     <title>Popup</title>
     <style>
         body {
-            width: 600px;
+            width: 200px;
             font-family: Arial, sans-serif;
         }
         .social-media-time {
@@ -27,18 +27,25 @@
         .checklist-item {
             margin-bottom: 10px;
         }
+        .checklist {
+            list-style-type: none; /* Remove bullet points */
+            padding: 0;
+        }
+        .checklist-item {
+            margin: 8px 0;
+        }
     </style>
 </head>
 <body>
+
     <h1>
-        <a href="http://localhost:8000/" target="_blank">Hey! How are you spending your time on social media?</a>
+      <a href="http://localhost:8000/" target="_blank">Hey! How are you spending your time on social media?</a>
     </h1>
-    
     <div class="social-media-time">
         <h2>Time Spent on Social Media</h2>
         <div id="social-media-time"></div>  <!-- This is where the time data will be shown -->
     </div>
-
+    
     <ul class="checklist">
         <li class="checklist-item">
             <input type="checkbox" id="item1" onchange="handleCheckboxChange(this)">
@@ -48,10 +55,21 @@
             <input type="checkbox" id="item2" onchange="handleCheckboxChange(this)">
             <label for="item2">I'm using social media to follow news.</label>
         </li>
+        <li class="checklist-item">
+            <input type="checkbox" id="item3" onchange="handleCheckboxChange(this)">
+            <label for="item3">I'm using social media to watch short form videos.
+            </label>
+        </li>
     </ul>
 
     <!-- Link to the external popup.js script -->
+    <script src="CheckboxState.js"></script>
+
+    <ul id="user-list"></ul>
     <script src="popup.js"></script>
+    <script src="background.js"></script>
+    <script src="script.js"></script>
+
 </body>
 </html>
-
+        }
