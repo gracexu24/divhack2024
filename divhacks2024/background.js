@@ -1,46 +1,49 @@
-let activeTabId = null;  // Declare globally for active tab ID
-let tabStartTime = null;  // Declare globally for tab start time
+let activeTabId = null;  // Declare globally
+let tabStartTime = null;  // Declare globally
 
-// List of social media sites (just domain names)
+// Your list of social media sites
 const socialMediaSites = new Set([
   "facebook.com",
   "twitter.com",
   "tiktok.com",
-  "instagram.com"
+  "instagram.com",
+  "reddit.com",
+  "snapchat.com",
+  "youtube.com",
+  "linkedin.com",
+  "discord.com",
+  "pinterest.com"
 ]);
 
 // Helper function to check if the URL belongs to a social media site
 function isSocialMedia(url) {
   const domain = new URL(url).hostname;
-  return socialMediaSites.has(domain);  // Return true if the domain is in the list
+  return socialMediaSites.has(domain);
 }
 
 // Function to start tracking time for a given tab
-function startTracking(tabId, url) {
-  console.log(`startTracking called for tabId: ${tabId}, URL: ${url}`);
+function startTracking(tabId) {
   if (activeTabId !== tabId) {
     // If activeTabId is different from the tabId, end the previous tracking session
     if (activeTabId !== null && tabStartTime !== null) {
-      endTracking(activeTabId);  // End tracking for the previous tab
+      endTracking(activeTabId);
     }
 
     // Set the new active tab
     activeTabId = tabId;
-    tabStartTime = Date.now();
-    console.log(`Tracking started for tab ID: ${activeTabId} on ${url}`);
+    tabStartTime = Date.now();  // Set the start time for the new tab
+    console.log(`Tracking started for tab ID: ${activeTabId}`);
   }
 }
 
-// Function to end tracking for a given tab and log the time spent
+// Function to end tracking for a given tab and save the time spent
 function endTracking(tabId) {
-  console.log(`endTracking called for tabId: ${tabId}`);
-
   if (tabStartTime !== null && activeTabId !== null) {
     const endTime = Date.now();
     const duration = (endTime - tabStartTime) / 1000; // Duration in seconds
-    console.log(`Duration: ${duration.toFixed(2)} seconds`);
 
-    // Get the URL and store time spent in chrome.storage
+    console.log(`Ending tracking for tab ID: ${tabId}, Duration: ${duration}s`);  // Debugging line
+
     chrome.tabs.get(tabId, (tab) => {
       if (tab && tab.url) {
         const url = new URL(tab.url).hostname;
@@ -50,43 +53,56 @@ function endTracking(tabId) {
           let siteTimes = result.siteTimes || {};
           siteTimes[url] = (siteTimes[url] || 0) + duration;
 
-          // Store updated time back to storage
           chrome.storage.local.set({ siteTimes });
-          console.log(`Updated time spent on ${url}: ${siteTimes[url]} seconds`);
+          console.log(`Time spent on ${url}: ${duration}s`);  // Debugging line
         });
       } else {
         console.log("Tab has no valid URL");
       }
     });
-
-    // Reset tracking variables
-    activeTabId = null;
-    tabStartTime = null;
   } else {
     console.log("No active tab or start time to calculate duration.");
   }
 }
 
-// Event listener for when a tab is updated (URL change or tab reload)
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);  // Debugging line
-  if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
-    startTracking(tabId, tab.url);  // Start tracking if it's a social media site
-  }
-});
-
-// Event listener for when a tab is activated (when you switch between tabs)
+// Monitor when a tab is activated (switched)
 chrome.tabs.onActivated.addListener((activeInfo) => {
-  chrome.tabs.get(activeInfo.tabId, (tab) => {
-    console.log(`Tab activated: ${activeInfo.tabId}, URL: ${tab.url}`);  // Debugging line
-    if (tab && isSocialMedia(tab.url)) {
-      startTracking(activeInfo.tabId, tab.url);  // Start tracking for active tab
+  activeTabId = activeInfo.tabId;  // Set activeTabId when the tab is activated
+  console.log('Tab activated:', activeTabId);
+
+  // Check if the activated tab is a social media site
+  chrome.tabs.get(activeTabId, (tab) => {
+    if (tab && tab.url && isSocialMedia(tab.url)) {
+      startTracking(activeTabId);  // Start tracking only if it's a social media site
+    } else {
+      console.log('Tab is not a social media site, no tracking started.');
     }
   });
+});
+
+// Event listener for when a tab is updated (e.g., URL change)
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  // Track time when social media sites are loaded
+  if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
+    console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);
+    startTracking(tabId);  // Start tracking if it's a social media site
+  }
 });
 
 // Event listener for when a tab is removed (closed)
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   console.log(`Tab removed: ${tabId}`);  // Debugging line
-  endTracking(tabId);  // End tracking when the tab is closed
+  endTracking(tabId);  // End tracking if the tab is closed
+
+  // Verify storage after ending tracking
+  chrome.storage.local.get(["siteTimes"], (result) => {
+    console.log("Stored site times:", result.siteTimes);  // Log the updated site times
+  });
 });
+
+// Helper to verify storage contents
+function verifyStorage() {
+  chrome.storage.local.get(["siteTimes"], (result) => {
+    console.log("Current stored site times:", result.siteTimes);  // Verify storage
+  });
+}
