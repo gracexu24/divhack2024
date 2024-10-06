@@ -9,21 +9,6 @@ const socialMediaSites = new Set([
   "tiktok.com"
 ]);
 
-function openPopup(tab) {
-  // Check if the tab's URL matches any of the specified social media sites
-  const url = new URL(tab.url); // Create a URL object to easily access hostname
-
-  if (
-    url.hostname === 'facebook.com' ||
-    url.hostname === 'twitter.com' ||
-    url.hostname === 'tiktok.com' ||
-    url.hostname === 'instagram.com'
-  ) {
-    chrome.action.openPopup(); // Open the popup
-  }
-}
-
-
 // Helper function to check if the URL belongs to a social media site
 function isSocialMedia(url) {
   const domain = new URL(url).hostname;
@@ -103,7 +88,14 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 // Event listener for when a tab is removed (closed)
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   console.log(`Tab removed: ${tabId}`);  // Debugging line
-  endTracking(tabId);  // End tracking if the tab is closed
+
+  // Check if the tab being removed is the active one
+  if (tabId === activeTabId) {
+    console.log(`Active tab removed, ending tracking.`);
+    endTracking(tabId);  // End tracking if the tab is closed
+  } else {
+    console.log('Removed tab is not the active one, no tracking ended.');
+  }
 
   // Verify storage after ending tracking
   chrome.storage.local.get(["siteTimes"], (result) => {
