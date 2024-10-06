@@ -1,7 +1,7 @@
 let activeTabId = null;  // Declare globally for active tab ID
 let tabStartTime = null;  // Declare globally for tab start time
 
-// List of social media sites
+// List of social media sites (just domain names)
 const socialMediaSites = new Set([
   "facebook.com",
   "twitter.com",
@@ -41,9 +41,8 @@ function endTracking(tabId) {
   if (tabStartTime !== null && activeTabId !== null) {
     const endTime = Date.now();
     const duration = (endTime - tabStartTime) / 1000; // Duration in seconds
-
     console.log(`Ending tracking for tab ID: ${tabId}`);
-    console.log(`Time spent on ${tabId}: ${duration.toFixed(2)} seconds`);
+    console.log(`Duration: ${duration.toFixed(2)} seconds`);
 
     // Get the URL and store time spent in chrome.storage
     chrome.tabs.get(tabId, (tab) => {
@@ -74,26 +73,24 @@ function endTracking(tabId) {
 
 // Event listener for when a tab is updated (URL change or tab reload)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);  // Debugging line
   if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
     startTracking(tabId, tab.url);  // Start tracking if it's a social media site
-
-    // Optional: Open the popup for social media sites
-    chrome.action.openPopup();  // This will open the default popup if defined in manifest
   }
 });
 
 // Event listener for when a tab is activated (when you switch between tabs)
 chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, (tab) => {
+    console.log(`Tab activated: ${activeInfo.tabId}, URL: ${tab.url}`);  // Debugging line
     if (tab && isSocialMedia(tab.url)) {
       startTracking(activeInfo.tabId, tab.url);  // Start tracking for active tab
-      chrome.action.openPopup();  // Open the popup for social media sites
     }
   });
 });
 
 // Event listener for when a tab is removed (closed)
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-  console.log(`Tab removed: ${tabId}`);
+  console.log(`Tab removed: ${tabId}`);  // Debugging line
   endTracking(tabId);  // End tracking when the tab is closed
 });
