@@ -8,9 +8,10 @@ app.use(cors());
 
 // Example data (in a real app, this could come from a database)
 const users = [
-    { id: 1, name: "Alice" },
-    { id: 2, name: "Bob" },
-    { id: 3, name: "Charlie" }
+    { id: 1, name: "Facebook" },
+    { id: 2, name: "Twitter" },
+    { id: 3, name: "Tiktok" }
+    { id: 4, name: "Instagram" }
 ];
 
 // Define a GET endpoint
