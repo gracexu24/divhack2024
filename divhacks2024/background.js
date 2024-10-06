@@ -6,13 +6,7 @@ const socialMediaSites = new Set([
   "facebook.com",
   "twitter.com",
   "tiktok.com",
-  "instagram.com",
-  "reddit.com",
-  "snapchat.com",
-  "youtube.com",
-  "linkedin.com",
-  "discord.com",
-  "pinterest.com"
+  "instagram.com"
 ]);
 
 // Helper function to check if the URL belongs to a social media site
@@ -23,6 +17,7 @@ function isSocialMedia(url) {
 
 // Function to start tracking time for a given tab
 function startTracking(tabId, url) {
+  console.log(`startTracking called for tabId: ${tabId}, URL: ${url}`);
   if (activeTabId !== tabId) {
     // If activeTabId is different from the tabId, end the previous tracking session
     if (activeTabId !== null && tabStartTime !== null) {
@@ -38,10 +33,11 @@ function startTracking(tabId, url) {
 
 // Function to end tracking for a given tab and log the time spent
 function endTracking(tabId) {
+  console.log(`endTracking called for tabId: ${tabId}`);
+
   if (tabStartTime !== null && activeTabId !== null) {
     const endTime = Date.now();
     const duration = (endTime - tabStartTime) / 1000; // Duration in seconds
-    console.log(`Ending tracking for tab ID: ${tabId}`);
     console.log(`Duration: ${duration.toFixed(2)} seconds`);
 
     // Get the URL and store time spent in chrome.storage
