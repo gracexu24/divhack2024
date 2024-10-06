@@ -71,12 +71,12 @@ function endTracking(tabId) {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);  // Debugging line
 
-  // Only start tracking if the tab has completed loading and is a social media tab
+  // Ensure we are checking only after the page is fully loaded
   if (changeInfo.status === 'complete' && tab.url && isSocialMedia(tab.url)) {
-    // Avoid starting tracking multiple times for the same tab
+    // Start tracking if it's a social media site and not already tracking this tab
     if (tabId !== activeTabId) {
       console.log(`Starting tracking for tab: ${tabId}, URL: ${tab.url}`);
-      startTracking(tabId, tab.url);  // Start tracking if it's a social media site
+      startTracking(tabId, tab.url);
     }
   }
 
@@ -131,4 +131,3 @@ function verifyStorage() {
     console.log("Current stored site times:", result.siteTimes);  // Verify storage
   });
 }
-
