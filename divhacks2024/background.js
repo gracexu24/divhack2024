@@ -1,6 +1,6 @@
 let openTabs = {};
 // Your list of social media sites (limited to Facebook, Twitter, Instagram, and TikTok)
-const socialMediaSites = new Map([
+const socialMediaSites = new Set([
   ['facebook.com', true],
   ['x.com', true], // 'x.com' for Twitter
   ['instagram.com', true],
@@ -10,9 +10,8 @@ const socialMediaSites = new Map([
 // Helper function to extract domain from a URL
 function getDomain(url) {
   const domain = new URL(url).hostname.replace('www.', ''); // Remove 'www.' if present
-  return domain;
+  return domain.toLowerCase();
 }
-
 
 // Helper function to check if the URL belongs to a social media site
 async function isSocialMedia() {
