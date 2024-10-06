@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const bodyParser = require('body-parser');
 const cors = require('cors'); 
 
 // Enable CORS for all origins (or specify your frontend origin)
