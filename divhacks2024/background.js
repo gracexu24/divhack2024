@@ -20,12 +20,12 @@ function startTracking(tabId) {
   if (activeTabId !== tabId) {
     // If activeTabId is different from the tabId, end the previous tracking session
     if (activeTabId !== null && tabStartTime !== null) {
-      endTracking(activeTabId);
+      endTracking(activeTabId); // End previous tracking session
     }
 
     // Set the new active tab
     activeTabId = tabId;
-    tabStartTime = Date.now();  // Set the start time for the new tab
+    tabStartTime = Date.now(); // Set the start time for the new tab
     console.log(`Tracking started for tab ID: ${activeTabId}`);
   }
 }
@@ -44,11 +44,13 @@ function endTracking(tabId) {
 
         // Update the time spent on the website
         chrome.storage.local.get(["siteTimes"], (result) => {
-          let siteTimes = result.siteTimes || {};
+          let siteTimes = result.siteTimes || {}; // Initialize with an empty object if undefined
           siteTimes[url] = (siteTimes[url] || 0) + duration;
 
-          chrome.storage.local.set({ siteTimes });
-          console.log(`Time spent on ${url}: ${duration}s`);  // Debugging line
+          // Save the updated siteTimes back to local storage
+          chrome.storage.local.set({ siteTimes }, () => {
+            console.log(`Time spent on ${url}: ${duration}s`);
+          });
         });
       } else {
         console.log("Tab has no valid URL");
@@ -98,14 +100,4 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   }
 
   // Verify storage after ending tracking
-  chrome.storage.local.get(["siteTimes"], (result) => {
-    console.log("Stored site times:", result.siteTimes);  // Log the updated site times
-  });
-});
-
-// Helper to verify storage contents
-function verifyStorage() {
-  chrome.storage.local.get(["siteTimes"], (result) => {
-    console.log("Current stored site times:", result.siteTimes);  // Verify storage
-  });
-}
+  chrome.storage.local.get([
