@@ -2,18 +2,34 @@ let activeTabId = null;  // Declare globally for active tab ID
 let tabStartTime = null;  // Declare globally for tab start time
 
 // Your list of social media sites (limited to Facebook, Twitter, Instagram, and TikTok)
-const socialMediaSites = new Set([
-  "facebook.com",
-  "twitter.com",
-  "instagram.com",
-  "tiktok.com"
+const socialMediaSites = new Map([
+  ['facebook', true],
+  ['x', true],
+  ['instagram', true],
+  ['tiktok', true]
 ]);
 
-// Helper function to check if the URL belongs to a social media site
-function isSocialMedia(url) {
-  const domain = new URL(url).hostname;
-  return socialMediaSites.has(domain);  // Return true if the domain is in the list
+// Helper function to extract domain from a URL
+function getDomain(url) {
+  const domain = new URL(url).hostname.replace('www.', ''); // Remove 'www.' if present
+  return domain;
 }
+//process controller/controller class & no js timeout
+//tricatch handler/exception handler
+
+// Helper function to check if the URL belongs to a social media site
+async function isSocialMedia() {
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  const url = tabs[0]?.url;
+  
+  if (url) {
+    const domain = getDomain(url); // Extract domain
+    return socialMediaSites.has(domain);  // Check if the domain is in the list of social media sites
+  }
+
+  return false; // Return false if URL is not found
+}
+
 
 // Function to start tracking time for a given tab
 function startTracking(tabId, url) {
