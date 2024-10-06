@@ -1,18 +1,12 @@
 let activeTabId = null;  // Declare globally for active tab ID
 let tabStartTime = null;  // Declare globally for tab start time
 
-// List of social media sites (just domain names)
+// Your list of social media sites (limited to Facebook, Twitter, Instagram, and TikTok)
 const socialMediaSites = new Set([
   "facebook.com",
   "twitter.com",
-  "tiktok.com",
   "instagram.com",
-  "reddit.com",
-  "snapchat.com",
-  "youtube.com",
-  "linkedin.com",
-  "discord.com",
-  "pinterest.com"
+  "tiktok.com"
 ]);
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -51,13 +45,13 @@ function startTracking(tabId, url) {
   if (activeTabId !== tabId) {
     // If activeTabId is different from the tabId, end the previous tracking session
     if (activeTabId !== null && tabStartTime !== null) {
-      endTracking(activeTabId);  // End tracking for the previous tab
+      endTracking(activeTabId); // End previous tracking session
     }
 
     // Set the new active tab
     activeTabId = tabId;
-    tabStartTime = Date.now();
-    console.log(`Tracking started for tab ID: ${activeTabId} on ${url}`);
+    tabStartTime = Date.now(); // Set the start time for the new tab
+    console.log(`Tracking started for tab ID: ${activeTabId}`);
   }
 }
 
@@ -76,12 +70,13 @@ function endTracking(tabId) {
 
         // Update the time spent on the website
         chrome.storage.local.get(["siteTimes"], (result) => {
-          let siteTimes = result.siteTimes || {};
+          let siteTimes = result.siteTimes || {}; // Initialize with an empty object if undefined
           siteTimes[url] = (siteTimes[url] || 0) + duration;
 
-          // Store updated time back to storage
-          chrome.storage.local.set({ siteTimes });
-          console.log(`Updated time spent on ${url}: ${siteTimes[url]} seconds`);
+          // Save the updated siteTimes back to local storage
+          chrome.storage.local.set({ siteTimes }, () => {
+            console.log(`Time spent on ${url}: ${duration}s`);
+          });
         });
       } else {
         console.log("Tab has no valid URL");
@@ -114,8 +109,38 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   });
 });
 
+// Event listener for when a tab is updated (e.g., URL change)
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === 'complete') {
+    console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);
+    // Track time when social media sites are loaded
+    if (isSocialMedia(tab.url)) {
+      startTracking(tabId);  // Start tracking if it's a social media site
+    }
+  }
+});
+
 // Event listener for when a tab is removed (closed)
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   console.log(`Tab removed: ${tabId}`);  // Debugging line
-  endTracking(tabId);  // End tracking when the tab is closed
+
+  // Check if the tab being removed is the active one
+  if (tabId === activeTabId) {
+    console.log(`Active tab removed, ending tracking.`);
+    endTracking(tabId);  // End tracking if the tab is closed
+  } else {
+    console.log('Removed tab is not the active one, no tracking ended.');
+  }
+
+  // Verify storage after ending tracking
+  chrome.storage.local.get(["siteTimes"], (result) => {
+    console.log("Stored site times:", result.siteTimes);  // Log the updated site times
+  });
 });
+
+// Helper to verify storage contents
+function verifyStorage() {
+  chrome.storage.local.get(["siteTimes"], (result) => {
+    console.log("Current stored site times:", result.siteTimes);  // Verify storage
+  });
+}
