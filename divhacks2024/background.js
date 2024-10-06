@@ -23,6 +23,34 @@ function getDomain(url) {
   }
 }
 
+// Helper function to check if the URL belongs to a social media site
+async function isSocialMedia(url) {
+  const domain = getDomain(url); // Extract domain
+  return socialMediaSites.has(domain); // Check if the domain is in the list
+}
+
+// Process controller for popup and tracking
+async function checkAndOpenPopup(tab) {
+  const isSocial = await isSocialMedia(tab.url);
+  if (isSocial) {
+    chrome.action.openPopup(); // Open the popup
+  }
+}
+
+// Listen for tab updates and check if it's a social media site
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);
+  
+  // If the tab is fully loaded (changeInfo.status === 'complete') and is a social media site
+  if (changeInfo.status === 'complete' && tab.active) {
+    checkAndOpenPopup(tab); // Check the URL and open popup if it's a social media site
+    if (isSocialMedia(tab.url)) {
+      console.log(`Tab updated: ${tabId}, social media site found, starting tracking.`);
+      startTracking(tabId, tab.url);
+    }
+  }
+});
+
 // Function to start tracking time for a given tab
 function startTracking(tabId, url) {
   const domain = getDomain(url);  // Extract the domain from the URL
@@ -51,7 +79,7 @@ function endTracking(tabId) {
     // Log the duration for this tab
     console.log(`Tab ${tabId} ended. Duration: ${duration.toFixed(2)} seconds`);
     
-    // Store the time spent on this site in chrome.storage
+    // Store the time spent on the site in chrome.storage
     chrome.storage.local.get(["siteTimes"], (result) => {
       let siteTimes = result.siteTimes || {};  // Initialize with empty object if undefined
       const domain = getDomain(openTabs[tabId].url); // Extract domain
@@ -62,6 +90,9 @@ function endTracking(tabId) {
       // Save the updated siteTimes back to local storage
       chrome.storage.local.set({ siteTimes }, () => {
         console.log(`Updated time spent on ${domain}: ${siteTimes[domain]} seconds`);
+
+        // Notify popup to update time display
+        chrome.runtime.sendMessage({ action: 'updateTimeDisplay' });
       });
     });
 
@@ -90,7 +121,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, (tab) => {
     console.log(`Tab activated: ${activeInfo.tabId}, URL: ${tab.url}`);
     
-    if (tab && socialMediaSites.has(getDomain(tab.url))) {
+    if (tab && isSocialMedia(tab.url)) {
       startTracking(activeInfo.tabId, tab.url);  // Start tracking for active tab if it's a social media site
     }
   });
