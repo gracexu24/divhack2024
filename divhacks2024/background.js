@@ -11,10 +11,6 @@ const socialMediaSites = new Set([
 // Helper function to check if the URL belongs to a social media site
 function isSocialMedia(url) {
   try {
-    if (!url || url.startsWith('chrome://') || url.startsWith('file://')) {
-      console.log(`Skipping invalid URL: ${url}`);  // Debugging line
-      return false;
-    }
     const domain = new URL(url).hostname;
     console.log(`Checking if ${domain} is a social media site`);  // Debugging line
     return socialMediaSites.has(domain);
@@ -26,13 +22,14 @@ function isSocialMedia(url) {
 
 // Function to start tracking time for a given tab
 function startTracking(tabId, url) {
-  // Start tracking if the tab is a social media site and it's not already being tracked
   if (!openTabs[tabId]) {
     openTabs[tabId] = {
       startTime: Date.now(),
       url: url
     };
     console.log(`Tracking started for tab ID: ${tabId}, URL: ${url}`);
+  } else {
+    console.log(`Already tracking tab ${tabId} with URL: ${url}`);
   }
 }
 
@@ -77,7 +74,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
   // Track time when a social media site is loaded
   if (changeInfo.status === 'complete' && tab.url && isSocialMedia(tab.url)) {
-    startTracking(tabId, tab.url);
+    console.log(`Starting tracking for tab ${tabId}`);
+    startTracking(tabId, tab.url);  // Start tracking when a social media site is fully loaded
   }
 
   // Open the popup when a social media tab is loaded
