@@ -24,22 +24,14 @@ function getDomain(url) {
 }
 
 // Helper function to check if the URL belongs to a social media site
-async function isSocialMedia() {
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-  const url = tabs[0]?.url;
-
-  // Check if the URL is valid and starts with http:// or https://
-  if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
-    const domain = getDomain(url); // Extract domain
-    return socialMediaSites.has(domain); // Check if the domain is in the list
-  }
-
-  return false; // Return false if URL is not valid or not a social media site
+async function isSocialMedia(url) {
+  const domain = getDomain(url); // Extract domain
+  return socialMediaSites.has(domain); // Check if the domain is in the list
 }
 
 // Process controller for popup and tracking
-async function checkAndOpenPopup() {
-  const isSocial = await isSocialMedia();
+async function checkAndOpenPopup(tab) {
+  const isSocial = await isSocialMedia(tab.url);
   if (isSocial) {
     chrome.action.openPopup(); // Open the popup
   }
@@ -51,7 +43,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   
   // If the tab is fully loaded (changeInfo.status === 'complete') and is a social media site
   if (changeInfo.status === 'complete' && tab.active) {
-    checkAndOpenPopup(); // Check the URL and open the popup if it's a social media site
+    checkAndOpenPopup(tab); // Check the URL and open popup if it's a social media site
     if (isSocialMedia(tab.url)) {
       console.log(`Tab updated: ${tabId}, social media site found, starting tracking.`);
       startTracking(tabId, tab.url);
@@ -131,18 +123,4 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     }
   });
 });
-
-// Event listener for opening a social media site and opening the popup
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
-    chrome.action.openPopup();  // Open the popup when the tab is a social media site
-  }
-});
-
-// Helper to verify storage contents (for debugging)
-function verifyStorage() {
-  chrome.storage.local.get(["siteTimes"], (result) => {
-    console.log("Current stored site times:", result.siteTimes);  // Verify storage
-  });
-}
 

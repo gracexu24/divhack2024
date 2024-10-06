@@ -9,34 +9,30 @@
             width: 200px;
             font-family: Arial, sans-serif;
         }
-        .checklist {
-            list-style-type: none; /* Remove bullet points */
-            padding: 0;
-        }
-        .checklist-item {
-            margin: 8px 0;
-        }
         .social-media-time {
-            margin-top: 20px;
+            margin-top: 10px;
         }
         .site-time {
-            margin: 5px 0;
+            margin-bottom: 8px;
         }
         .site-name {
             font-weight: bold;
         }
         .site-duration {
-            font-size: 12px;
-            color: #555;
+            color: grey;
         }
     </style>
 </head>
 <body>
-
     <h1>
-      <a href="http://localhost:8000/" target="_blank">Hey! How are you spending your time on social media?</a>
+        <a href="http://localhost:8000/" target="_blank">Hey! How are you spending your time on social media?</a>
     </h1>
     
+    <div class="social-media-time">
+        <h2>Time Spent on Social Media</h2>
+        <div id="social-media-time"></div>  <!-- This is where the time data will be shown -->
+    </div>
+
     <ul class="checklist">
         <li class="checklist-item">
             <input type="checkbox" id="item1" onchange="handleCheckboxChange(this)">
@@ -44,25 +40,5 @@
         </li>
         <li class="checklist-item">
             <input type="checkbox" id="item2" onchange="handleCheckboxChange(this)">
-            <label for="item2">I'm using social media to look at artwork.</label>
-        </li>
-        <li class="checklist-item">
-            <input type="checkbox" id="item3" onchange="handleCheckboxChange(this)">
-            <label for="item3">I'm using social media to watch short form videos.</label>
-        </li>
-    </ul>
-
-    <!-- Social Media Time Section -->
-    <div class="social-media-time">
-        <h2>Time Spent on Social Media</h2>
-        <div id="social-media-time"></div>
-    </div>
-
-    <script src="CheckboxState.js"></script>
-    <script src="popup.js"></script>
-    <script src="background.js"></script>
-    <script src="script.js"></script>
-
-</body>
-</html>
+            <
 
