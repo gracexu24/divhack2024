@@ -1,6 +1,5 @@
-let openTabs = {};
-
-// Your list of social media sites (limited to Facebook, Twitter, Instagram, and TikTok)
+let openTabs = {}; // To keep track of tabs that are being actively tracked
+// List of social media sites
 const socialMediaSites = new Map([
   ['facebook.com', true],
   ['x.com', true], // 'x.com' for Twitter
@@ -11,7 +10,7 @@ const socialMediaSites = new Map([
 // Helper function to extract domain from a URL
 function getDomain(url) {
   const domain = new URL(url).hostname.replace('www.', ''); // Remove 'www.' if present
-  return domain;
+  return domain.toLowerCase();
 }
 
 // Helper function to check if the URL belongs to a social media site
@@ -87,6 +86,7 @@ function endTracking(tabId) {
       let siteTimes = result.siteTimes || {};  // Initialize with empty object if undefined
       const domain = new URL(openTabs[tabId].url).hostname;
       
+      // Update the time spent on this specific domain
       siteTimes[domain] = (siteTimes[domain] || 0) + duration;
       
       // Save the updated siteTimes back to local storage
