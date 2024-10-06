@@ -8,6 +8,13 @@ const socialMediaSites = new Map([
   ['tiktok.com', true]
 ]);
 
+if (typeof window !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+      // Your code to run after the DOM is fully loaded
+      console.log('DOM fully loaded and parsed');
+  });
+}
+
 // Helper function to extract domain from a URL
 function getDomain(url) {
   try {
