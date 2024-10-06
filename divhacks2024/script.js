@@ -29,7 +29,7 @@ fetch('http://localhost:3000/api/users', {
     headers: {
         'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ users: userList })  // Sending the list as JSON
+    body: JSON.stringify({ user: userList })  // Sending the list as JSON
 })
 .then(response => response.json())
 .then(data => {

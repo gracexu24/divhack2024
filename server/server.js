@@ -26,9 +26,9 @@ let users = [];
 app.post('/api/users', (req, res) => {
     const { user } = req.body;
     
-    if (Array.isArray(user) && users.length === 4) {
+    if (Array.isArray(user) && user.length === 4) {
         // Save the received users list to the server (in-memory)
-        usersList = user;  // You can save this to a database in real-world scenarios
+        users = user;  // You can save this to a database in real-world scenarios
         
         console.log('Received users:', users);
         
