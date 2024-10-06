@@ -19,13 +19,14 @@ app.use(cors());
 // Use body-parser middleware to parse incoming JSON requests
 app.use(bodyParser.json());
 
-app.use(express.static('public'));
+app.use(express.static('../divhacks2024'));
 
 // A simple in-memory array to store the user list
 let users = [];
 
 // POST endpoint to receive the list of users
 app.post('/api/users', (req, res) => {
+    console.log(req.body); 
     const { user } = req.body;
     
     if (Array.isArray(user) && user.length === 4) {
