@@ -1,19 +1,28 @@
 let activeTabId = null;  // Declare globally
 let tabStartTime = null;  // Declare globally
 
-// Your list of social media sites
+// Your list of social media sites (limited to Facebook, Twitter, Instagram, and TikTok)
 const socialMediaSites = new Set([
   "facebook.com",
   "twitter.com",
-  "tiktok.com",
   "instagram.com",
-  "reddit.com",
-  "snapchat.com",
-  "youtube.com",
-  "linkedin.com",
-  "discord.com",
-  "pinterest.com"
+  "tiktok.com"
 ]);
+
+function openPopup(tab) {
+  // Check if the tab's URL matches any of the specified social media sites
+  const url = new URL(tab.url); // Create a URL object to easily access hostname
+
+  if (
+    url.hostname === 'facebook.com' ||
+    url.hostname === 'twitter.com' ||
+    url.hostname === 'tiktok.com' ||
+    url.hostname === 'instagram.com'
+  ) {
+    chrome.action.openPopup(); // Open the popup
+  }
+}
+
 
 // Helper function to check if the URL belongs to a social media site
 function isSocialMedia(url) {
@@ -82,10 +91,12 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 
 // Event listener for when a tab is updated (e.g., URL change)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  // Track time when social media sites are loaded
-  if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
+  if (changeInfo.status === 'complete') {
     console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);
-    startTracking(tabId);  // Start tracking if it's a social media site
+    // Track time when social media sites are loaded
+    if (isSocialMedia(tab.url)) {
+      startTracking(tabId);  // Start tracking if it's a social media site
+    }
   }
 });
 
