@@ -16,6 +16,19 @@
         .checklist-item {
             margin: 8px 0;
         }
+        .social-media-time {
+            margin-top: 20px;
+        }
+        .site-time {
+            margin: 5px 0;
+        }
+        .site-name {
+            font-weight: bold;
+        }
+        .site-duration {
+            font-size: 12px;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -39,13 +52,17 @@
         </li>
     </ul>
 
-    <script src="CheckboxState.js"></script>
+    <!-- Social Media Time Section -->
+    <div class="social-media-time">
+        <h2>Time Spent on Social Media</h2>
+        <div id="social-media-time"></div>
+    </div>
 
-    <ul id="user-list"></ul>
+    <script src="CheckboxState.js"></script>
     <script src="popup.js"></script>
     <script src="background.js"></script>
     <script src="script.js"></script>
 
 </body>
 </html>
-        }
+
