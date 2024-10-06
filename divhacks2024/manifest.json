@@ -17,21 +17,12 @@
     "other-package": "..."
   }
   ,"host_permissions": [
-    "x.com",
-    "reddit.com",
     "facebook.com",
     "twitter.com",
     "tiktok.com",
-    "instagram.com",
-    "reddit.com",
-    "snapchat.com",
-    "youtube.com",
-    "linkedin.com",
-    "discord.com",
-    "pinterest.com"
+    "instagram.com"
 
   ]
-
   
 
 }
