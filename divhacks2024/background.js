@@ -1,4 +1,5 @@
-let openTabs = {};
+let openTabs = {};  // Object to track tabs and their start times
+
 // Your list of social media sites (limited to Facebook, Twitter, Instagram, and TikTok)
 const socialMediaSites = new Map([
   ['facebook.com', true],
@@ -13,59 +14,42 @@ function getDomain(url) {
   return domain;
 }
 
-
 // Helper function to check if the URL belongs to a social media site
-async function isSocialMedia() {
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-  const url = tabs[0]?.url;
-  
-  if (url) {
-    const domain = getDomain(url); // Extract domain
-    return socialMediaSites.has(domain); // Check if the domain is in the list
-  }
-
-  return false; // Return false if URL is not found
+async function isSocialMedia(url) {
+  const domain = getDomain(url); // Extract domain
+  return socialMediaSites.has(domain); // Check if the domain is in the list
 }
 
-// Process controller
+// Process controller to check and open popup if it's a social media site
 async function checkAndOpenPopup() {
-  const isSocial = await isSocialMedia();
-  if (isSocial) {
-    chrome.action.openPopup(); // Open the popup
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  const url = tabs[0]?.url;
+
+  if (url && await isSocialMedia(url)) {
+    chrome.action.openPopup(); // Open the popup if it's a social media site
   }
 }
 
 // Listen for tab updates
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete' && tab.active) {
-    checkAndOpenPopup(); // Check the URL and open popup if it's a social media site
-  }
-});
-
-// Event listener for when a tab is updated (URL change or tab reload)
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);
-  
+
   // If the tab is fully loaded (changeInfo.status === 'complete') and is a social media site
-  if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
-    console.log(`Tab updated: ${tabId}, social media site found, starting tracking.`);
-    startTracking(tabId, tab.url);
+  if (changeInfo.status === 'complete' && tab.active) {
+    checkAndOpenPopup();  // Open the popup if it's a social media site
+    if (isSocialMedia(tab.url)) {
+      startTracking(tabId, tab.url);  // Start tracking for social media sites
+    }
   }
 });
-
-// Helper function to check if a tab's URL belongs to a social media site
-function isSocialMedia(url) {
-  const domain = new URL(url).hostname;
-  return socialMediaSites.has(domain);
-}
 
 // Function to start tracking time for a given tab
 function startTracking(tabId, url) {
   if (!(tabId in openTabs)) {
     // Start tracking the tab and store the start time
-    openTabs[tabId] = { 
+    openTabs[tabId] = {
       startTime: Date.now(),
-      url: url 
+      url: url
     };
     console.log(`Tracking started for tab ${tabId}, URL: ${url}`);
   }
@@ -78,17 +62,17 @@ function endTracking(tabId) {
     const startTime = openTabs[tabId].startTime;
     const endTime = Date.now();
     const duration = (endTime - startTime) / 1000;  // Duration in seconds
-    
+
     // Log the duration for this tab
     console.log(`Tab ${tabId} ended. Duration: ${duration.toFixed(2)} seconds`);
-    
+
     // Store the time spent on the site in chrome.storage
     chrome.storage.local.get(["siteTimes"], (result) => {
       let siteTimes = result.siteTimes || {};  // Initialize with empty object if undefined
-      const domain = new URL(openTabs[tabId].url).hostname;
-      
+      const domain = getDomain(openTabs[tabId].url);
+
       siteTimes[domain] = (siteTimes[domain] || 0) + duration;
-      
+
       // Save the updated siteTimes back to local storage
       chrome.storage.local.set({ siteTimes }, () => {
         console.log(`Updated time spent on ${domain}: ${siteTimes[domain]} seconds`);
@@ -105,7 +89,7 @@ function endTracking(tabId) {
 // Event listener for when a tab is removed (closed)
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   console.log(`Tab removed: ${tabId}`);
-  
+
   // Only end tracking if this tab was tracked
   if (tabId in openTabs) {
     console.log(`Ending tracking for tab ${tabId} (because it's removed).`);
@@ -119,9 +103,10 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
 chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, (tab) => {
     console.log(`Tab activated: ${activeInfo.tabId}, URL: ${tab.url}`);
-    
+
+    // Only start tracking if it's a social media site
     if (tab && isSocialMedia(tab.url)) {
-      startTracking(activeInfo.tabId, tab.url);  // Start tracking for active tab if it's a social media site
+      startTracking(activeInfo.tabId, tab.url);  // Start tracking for active tab
     }
   });
 });
