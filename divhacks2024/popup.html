@@ -21,6 +21,12 @@
         .site-duration {
             color: grey;
         }
+        .checklist {
+            margin-top: 20px;
+        }
+        .checklist-item {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -40,5 +46,26 @@
         </li>
         <li class="checklist-item">
             <input type="checkbox" id="item2" onchange="handleCheckboxChange(this)">
-            <
 
+=======
+            <label for="item2">I'm using social media to look at artwork.</label>
+        </li>
+        <li class="checklist-item">
+            <input type="checkbox" id="item3" onchange="handleCheckboxChange(this)">
+            <label for="item3">I'm using social media to watch short form videos.
+                console.log("Current URL:", url);
+                console.log("Extracted Domain:", domain);
+                console.log("Is Social Media:", isSocial);
+            </label>
+        </li>
+    </ul>
+
+    <script src="CheckboxState.js"></script>
+
+    <ul id="user-list"></ul>
+    <script src="popup.js"></script>
+    <script src="background.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
