@@ -21,7 +21,7 @@ const userList = [
 ];
 
 // Send the list to the server
-fetch('http://localhost:3000/api/users', {
+fetch('https://d902-128-59-178-198.ngrok-free.app/api/users', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
