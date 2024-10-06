@@ -1,11 +1,10 @@
-let openTabs = {};  // Object to track tabs and their start times
-
+let openTabs = {};
 // Your list of social media sites (limited to Facebook, Twitter, Instagram, and TikTok)
 const socialMediaSites = new Map([
-  ['facebook', true],
-  ['x', true],
-  ['instagram', true],
-  ['tiktok', true]
+  ['facebook.com', true],
+  ['x.com', true], // 'x.com' for Twitter
+  ['instagram.com', true],
+  ['tiktok.com', true]
 ]);
 
 // Helper function to extract domain from a URL
@@ -13,8 +12,7 @@ function getDomain(url) {
   const domain = new URL(url).hostname.replace('www.', ''); // Remove 'www.' if present
   return domain;
 }
-//process controller/controller class & no js timeout
-//tricatch handler/exception handler
+
 
 // Helper function to check if the URL belongs to a social media site
 async function isSocialMedia() {
@@ -23,11 +21,26 @@ async function isSocialMedia() {
   
   if (url) {
     const domain = getDomain(url); // Extract domain
-    return socialMediaSites.has(domain);  // Check if the domain is in the list of social media sites
+    return socialMediaSites.has(domain); // Check if the domain is in the list
   }
 
   return false; // Return false if URL is not found
 }
+
+// Process controller
+async function checkAndOpenPopup() {
+  const isSocial = await isSocialMedia();
+  if (isSocial) {
+    chrome.action.openPopup(); // Open the popup
+  }
+}
+
+// Listen for tab updates
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === 'complete' && tab.active) {
+    checkAndOpenPopup(); // Check the URL and open popup if it's a social media site
+  }
+});
 
 // Event listener for when a tab is updated (URL change or tab reload)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
