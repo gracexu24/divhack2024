@@ -15,6 +15,7 @@ if (typeof window !== 'undefined') {
   });
 }
 
+
 // Helper function to extract domain from a URL
 function getDomain(url) {
   const domain = new URL(url).hostname.replace('www.', ''); // Remove 'www.' if present
