@@ -9,31 +9,6 @@ const socialMediaSites = new Set([
   "tiktok.com"
 ]);
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete' && tab.url) {
-    openPopup(tab);
-  }
-});
-
-function openPopup(tab) {
-  const url = new URL(tab.url);
-
-  // Check if the hostname matches any of the specified domains
-  if (
-    url.hostname === 'www.facebook.com' ||
-    url.hostname === 'www.twitter.com' ||
-    url.hostname === 'www.tiktok.com' ||
-    url.hostname === 'www.instagram.com' ||
-    url.hostname === 'facebook.com' ||
-    url.hostname === 'twitter.com' ||
-    url.hostname === 'tiktok.com' ||
-    url.hostname === 'instagram.com'
-  ) {
-    chrome.action.openPopup(); // Open the popup
-  }
-}
-
-
 // Helper function to check if the URL belongs to a social media site
 function isSocialMedia(url) {
   const domain = new URL(url).hostname;
@@ -51,13 +26,13 @@ function startTracking(tabId, url) {
     // Set the new active tab
     activeTabId = tabId;
     tabStartTime = Date.now(); // Set the start time for the new tab
-    console.log(`Tracking started for tab ID: ${activeTabId}`);
+    console.log(`Tracking started for tab ID: ${activeTabId}, URL: ${url}`);
   }
 }
 
 // Function to end tracking for a given tab and log the time spent
 function endTracking(tabId) {
-  if (tabStartTime !== null && activeTabId !== null) {
+  if (tabStartTime !== null && activeTabId !== null && activeTabId === tabId) {
     const endTime = Date.now();
     const duration = (endTime - tabStartTime) / 1000; // Duration in seconds
     console.log(`Ending tracking for tab ID: ${tabId}`);
@@ -91,7 +66,7 @@ function endTracking(tabId) {
   }
 }
 
-// Event listener for when a tab is updated (URL change or tab reload)
+// Event listener for when a tab is updated (e.g., URL change or tab reload)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);  // Debugging line
   if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
@@ -105,19 +80,10 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     console.log(`Tab activated: ${activeInfo.tabId}, URL: ${tab.url}`);  // Debugging line
     if (tab && isSocialMedia(tab.url)) {
       startTracking(activeInfo.tabId, tab.url);  // Start tracking for active tab
+    } else {
+      console.log('Tab is not a social media site, no tracking started.');
     }
   });
-});
-
-// Event listener for when a tab is updated (e.g., URL change)
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete') {
-    console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);
-    // Track time when social media sites are loaded
-    if (isSocialMedia(tab.url)) {
-      startTracking(tabId);  // Start tracking if it's a social media site
-    }
-  }
 });
 
 // Event listener for when a tab is removed (closed)
@@ -143,4 +109,31 @@ function verifyStorage() {
   chrome.storage.local.get(["siteTimes"], (result) => {
     console.log("Current stored site times:", result.siteTimes);  // Verify storage
   });
+}
+
+// Event listener for when a tab is updated (URL change or tab reload)
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  console.log(`Tab updated: ${tabId}, URL: ${tab.url}`);  // Debugging line
+  if (changeInfo.status === 'complete' && isSocialMedia(tab.url)) {
+    startTracking(tabId, tab.url);  // Start tracking if it's a social media site
+  }
+});
+
+// Function to open the popup (to be triggered when a social media tab is updated)
+function openPopup(tab) {
+  const url = new URL(tab.url);
+
+  // Check if the hostname matches any of the specified domains
+  if (
+    url.hostname === 'www.facebook.com' ||
+    url.hostname === 'www.twitter.com' ||
+    url.hostname === 'www.tiktok.com' ||
+    url.hostname === 'www.instagram.com' ||
+    url.hostname === 'facebook.com' ||
+    url.hostname === 'twitter.com' ||
+    url.hostname === 'tiktok.com' ||
+    url.hostname === 'instagram.com'
+  ) {
+    chrome.action.openPopup(); // Open the popup
+  }
 }
