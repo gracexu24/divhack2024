@@ -19,6 +19,8 @@ app.use(cors());
 // Use body-parser middleware to parse incoming JSON requests
 app.use(bodyParser.json());
 
+app.use(express.static('public'));
+
 // A simple in-memory array to store the user list
 let users = [];
 
