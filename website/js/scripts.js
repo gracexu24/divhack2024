@@ -31,26 +31,10 @@ $(document).ready(function(){
     $("#popup").modal('show');
 }) 
 
-//function to access username
-// Function to display a user at a specific index
-function displayUserAtIndex(index) {
-    const userNameElement = document.getElementById("user-name");  // Target the element where the name will be displayed
-    const indexElement = document.getElementById("index");  // Target the element to show the index
-    const userList = document.getElementById('user-list');
-    const listItems = userList.children;  // Get all the <li> elements (children of the <ul>)
-
-    // Set the displayed index
-    indexElement.textContent = index;
-
-    // Check if the index is within the bounds of the array
-    if (index >= 0 && index < listItems.length) {
-        // Set the text content to the user at the specified index
-        userNameElement.textContent = listItems[index].textContent;  // Access the textContent of the <li> at the specified index
-    } else {
-        // If the index is out of bounds, show an error message
-        userNameElement.textContent = "Index out of bounds!";
-    }
-}
+const userList = document.getElementById('user-list');
+const listItems = userList.children; 
+document.getElementById("user-name0").textContent = listItems[0].textContent;
+document.getElementById("user-name1").textContent = listItems[1].textContent;
 
 
 
