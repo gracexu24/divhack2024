@@ -100,4 +100,14 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   }
 
   // Verify storage after ending tracking
-  chrome.storage.local.get([
+  chrome.storage.local.get(["siteTimes"], (result) => {
+    console.log("Stored site times:", result.siteTimes);  // Log the updated site times
+  });
+});
+
+// Helper to verify storage contents
+function verifyStorage() {
+  chrome.storage.local.get(["siteTimes"], (result) => {
+    console.log("Current stored site times:", result.siteTimes);  // Verify storage
+  });
+}
