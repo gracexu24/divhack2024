@@ -38,7 +38,7 @@ function updateUserNames() {
     const userList = document.getElementById('user-list');
     const listItems = userList.children;
 
-    document.getElementById("user-name0").textContent = listItems[0].textContent; // Display first user
+    document.getElementById("user-name0").textContent = listItems[3].textContent; // Display first user
     document.getElementById("user-name1").textContent = listItems[1].textContent; 
     document.getElementById("user-name2").textContent = listItems[2].textContent;
     document.getElementById("user-name3").textContent = listItems[3].textContent;
