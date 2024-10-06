@@ -3,7 +3,7 @@
   "name": "Social Media Tracker",
   "description": "Base Level Extension",
   "version": "1.0",
-  "permissions": ["tabs", "activeTab"],
+  "permissions": ["tabs", "activeTab","storage"],
   "background":{
     "service_worker": "background.js"
   }

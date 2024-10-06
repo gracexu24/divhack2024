@@ -6,7 +6,7 @@
     <title>Popup</title>
     <style>
         body {
-            width: 600px;
+            width: 200px;
             font-family: Arial, sans-serif;
         }
         .social-media-time {
@@ -27,18 +27,25 @@
         .checklist-item {
             margin-bottom: 10px;
         }
+        .checklist {
+            list-style-type: none; /* Remove bullet points */
+            padding: 0;
+        }
+        .checklist-item {
+            margin: 8px 0;
+        }
     </style>
 </head>
 <body>
+
     <h1>
-        <a href="http://localhost:8000/" target="_blank">Hey! How are you spending your time on social media?</a>
+      <a href="http://localhost:8000/" target="_blank">Hey! How are you spending your time on social media?</a>
     </h1>
-    
     <div class="social-media-time">
         <h2>Time Spent on Social Media</h2>
         <div id="social-media-time"></div>  <!-- This is where the time data will be shown -->
     </div>
-
+    
     <ul class="checklist">
         <li class="checklist-item">
             <input type="checkbox" id="item1" onchange="handleCheckboxChange(this)">
@@ -48,65 +55,21 @@
             <input type="checkbox" id="item2" onchange="handleCheckboxChange(this)">
             <label for="item2">I'm using social media to follow news.</label>
         </li>
+        <li class="checklist-item">
+            <input type="checkbox" id="item3" onchange="handleCheckboxChange(this)">
+            <label for="item3">I'm using social media to watch short form videos.
+            </label>
+        </li>
     </ul>
 
-    <script>
-        // Function to fetch and display the time spent on each social media site
-        function displayTimeSpent() {
-            // Get the stored time data from chrome.storage.local
-            chrome.storage.local.get(['siteTimes'], (result) => {
-                const siteTimes = result.siteTimes || {};
-                const timeDisplay = document.getElementById('social-media-time');
-                
-                // Clear previous content
-                timeDisplay.innerHTML = '';
-        
-                // If no time data is available, show a message
-                if (Object.keys(siteTimes).length === 0) {
-                    timeDisplay.innerHTML = "<p>No time tracked yet.</p>";
-                } else {
-                    // Iterate over the sites and display the time spent
-                    for (let domain in siteTimes) {
-                        const timeSpent = siteTimes[domain];
-                        
-                        const siteDiv = document.createElement('div');
-                        siteDiv.classList.add('site-time');
-                        
-                        const siteName = document.createElement('div');
-                        siteName.classList.add('site-name');
-                        siteName.textContent = domain;
-                
-                        const siteDuration = document.createElement('div');
-                        siteDuration.classList.add('site-duration');
-                        siteDuration.textContent = `Time: ${timeSpent.toFixed(2)} seconds`;
-                
-                        siteDiv.appendChild(siteName);
-                        siteDiv.appendChild(siteDuration);
-                        timeDisplay.appendChild(siteDiv);
-                    }
-                }
-            });
-        }
-        
-        // Run the function to display the time when the popup is opened
-        document.addEventListener('DOMContentLoaded', displayTimeSpent);
+    <!-- Link to the external popup.js script -->
+    <script src="CheckboxState.js"></script>
 
-        // Listen for changes in chrome.storage and update the time display
-        chrome.storage.onChanged.addListener((changes, areaName) => {
-            if (areaName === 'local' && changes.siteTimes) {
-                displayTimeSpent();  // Refresh time display if siteTimes changes
-            }
-        });
+    <ul id="user-list"></ul>
+    <script src="popup.js"></script>
+    <script src="background.js"></script>
+    <script src="script.js"></script>
 
-        // Handle checkbox changes (you may want to add more logic here)
-        function handleCheckboxChange(checkbox) {
-            if (checkbox.checked) {
-                console.log(`${checkbox.nextElementSibling.innerText} - Checked`);
-            } else {
-                console.log(`${checkbox.nextElementSibling.innerText} - Unchecked`);
-            }
-        }
-    </script>
 </body>
 </html>
-
+        }
